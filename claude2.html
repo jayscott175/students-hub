@@ -1,0 +1,2607 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🎓 Student Hub</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --glass: rgba(255,255,255,0.12);
+    --glass-border: rgba(255,255,255,0.22);
+    --glass-strong: rgba(255,255,255,0.18);
+    --accent: #a78bfa;
+    --accent2: #38bdf8;
+    --accent3: #fb7185;
+    --accent4: #34d399;
+    --accent5: #fbbf24;
+    --text: #f1f5f9;
+    --text-muted: rgba(241,245,249,0.6);
+    --dark: #0f0a1e;
+    --shadow: 0 8px 32px rgba(0,0,0,0.35);
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{
+    font-family:'DM Sans',sans-serif;
+    background: linear-gradient(135deg,#0f0a1e 0%,#1a0a2e 30%,#0a1628 60%,#0f1a0a 100%);
+    min-height:100vh;
+    color:var(--text);
+    overflow-x:hidden;
+  }
+  body::before{
+    content:'';
+    position:fixed;
+    inset:0;
+    background: radial-gradient(ellipse at 20% 20%, rgba(167,139,250,0.15) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 80%, rgba(56,189,248,0.12) 0%, transparent 50%),
+                radial-gradient(ellipse at 60% 20%, rgba(251,113,133,0.1) 0%, transparent 40%),
+                radial-gradient(ellipse at 20% 80%, rgba(52,211,153,0.1) 0%, transparent 40%);
+    pointer-events:none;
+    z-index:0;
+  }
+  .orb{position:fixed;border-radius:50%;filter:blur(80px);pointer-events:none;z-index:0;animation:float 8s ease-in-out infinite;}
+  .orb1{width:400px;height:400px;background:rgba(167,139,250,0.08);top:-100px;right:-100px;}
+  .orb2{width:300px;height:300px;background:rgba(56,189,248,0.07);bottom:-50px;left:-50px;animation-delay:-3s;}
+  .orb3{width:200px;height:200px;background:rgba(251,113,133,0.06);top:50%;left:50%;animation-delay:-5s;}
+  @keyframes float{0%,100%{transform:translate(0,0) scale(1);}50%{transform:translate(20px,-20px) scale(1.05);}}
+
+  /* GLASS UTILITY */
+  .glass{
+    background:var(--glass);
+    backdrop-filter:blur(16px);
+    -webkit-backdrop-filter:blur(16px);
+    border:1px solid var(--glass-border);
+    border-radius:20px;
+  }
+  .glass-dark{
+    background:rgba(10,5,30,0.5);
+    backdrop-filter:blur(20px);
+    -webkit-backdrop-filter:blur(20px);
+    border:1px solid rgba(255,255,255,0.1);
+    border-radius:20px;
+  }
+
+  /* SCREENS */
+  .screen{display:none;position:relative;z-index:1;}
+  .screen.active{display:block;}
+
+  /* ========== AUTH SCREEN ========== */
+  #auth-screen{
+    min-height:100vh;
+    align-items:center;
+    justify-content:center;
+    padding:20px;
+  }
+  #auth-screen.active{display:flex;}
+  .auth-container{
+    width:100%;
+    max-width:440px;
+  }
+  .auth-logo{
+    text-align:center;
+    margin-bottom:32px;
+  }
+  .auth-logo .logo-icon{
+    font-size:56px;
+    display:block;
+    margin-bottom:8px;
+    animation:pulse 2s ease-in-out infinite;
+  }
+  @keyframes pulse{0%,100%{transform:scale(1);}50%{transform:scale(1.08);}}
+  .auth-logo h1{
+    font-family:'Syne',sans-serif;
+    font-size:32px;
+    font-weight:800;
+    background:linear-gradient(135deg,var(--accent),var(--accent2));
+    -webkit-background-clip:text;
+    -webkit-text-fill-color:transparent;
+    background-clip:text;
+  }
+  .auth-logo p{color:var(--text-muted);font-size:14px;margin-top:4px;}
+  .auth-card{padding:32px;}
+  .auth-tabs{display:flex;gap:4px;margin-bottom:28px;background:rgba(0,0,0,0.2);border-radius:12px;padding:4px;}
+  .auth-tab{
+    flex:1;padding:10px;border:none;background:transparent;color:var(--text-muted);
+    border-radius:10px;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:500;
+    transition:all 0.3s;
+  }
+  .auth-tab.active{background:var(--glass-strong);color:var(--text);box-shadow:var(--shadow);}
+  .auth-form{display:none;}
+  .auth-form.active{display:block;}
+  .form-group{margin-bottom:16px;}
+  .form-group label{display:block;font-size:13px;font-weight:500;color:var(--text-muted);margin-bottom:6px;}
+  .form-group input, .form-group select{
+    width:100%;padding:12px 16px;
+    background:rgba(0,0,0,0.25);
+    border:1px solid var(--glass-border);
+    border-radius:12px;
+    color:var(--text);
+    font-family:'DM Sans',sans-serif;
+    font-size:14px;
+    outline:none;
+    transition:border-color 0.3s;
+  }
+  .form-group input:focus,.form-group select:focus{border-color:var(--accent);}
+  .form-group select option{background:#1a0a2e;color:#fff;}
+  .btn-primary{
+    width:100%;padding:14px;
+    background:linear-gradient(135deg,var(--accent),#7c3aed);
+    border:none;border-radius:12px;
+    color:#fff;font-family:'Syne',sans-serif;font-size:15px;font-weight:700;
+    cursor:pointer;transition:all 0.3s;letter-spacing:0.5px;
+    margin-top:8px;
+  }
+  .btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 25px rgba(167,139,250,0.4);}
+  .btn-primary:active{transform:translateY(0);}
+  .error-msg{color:#fb7185;font-size:13px;margin-top:8px;display:none;}
+  .error-msg.show{display:block;}
+
+  /* ========== MAIN APP ========== */
+  #app-screen{min-height:100vh;}
+  #app-screen.active{display:block;}
+
+  /* TOP NAV */
+  .topnav{
+    position:sticky;top:0;z-index:100;
+    padding:12px 24px;
+    background:rgba(10,5,30,0.7);
+    backdrop-filter:blur(24px);
+    -webkit-backdrop-filter:blur(24px);
+    border-bottom:1px solid var(--glass-border);
+    display:flex;align-items:center;gap:12px;
+  }
+  .nav-logo{
+    font-family:'Syne',sans-serif;font-size:20px;font-weight:800;
+    background:linear-gradient(135deg,var(--accent),var(--accent2));
+    -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+    white-space:nowrap;
+  }
+  .nav-tabs{display:flex;gap:4px;flex:1;justify-content:center;flex-wrap:wrap;}
+  .nav-tab{
+    padding:8px 14px;border:none;background:transparent;
+    color:var(--text-muted);border-radius:10px;cursor:pointer;
+    font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;
+    transition:all 0.3s;white-space:nowrap;display:flex;align-items:center;gap:6px;
+  }
+  .nav-tab:hover{background:var(--glass);color:var(--text);}
+  .nav-tab.active{background:var(--glass-strong);color:var(--text);border:1px solid var(--glass-border);}
+  .nav-right{display:flex;align-items:center;gap:10px;margin-left:auto;}
+  .avatar-btn{
+    width:38px;height:38px;border-radius:50%;
+    background:linear-gradient(135deg,var(--accent),var(--accent2));
+    border:none;cursor:pointer;font-size:16px;
+    display:flex;align-items:center;justify-content:center;
+    font-weight:700;color:#fff;font-family:'Syne',sans-serif;
+    transition:transform 0.2s;flex-shrink:0;
+  }
+  .avatar-btn:hover{transform:scale(1.1);}
+  .admin-badge{
+    background:linear-gradient(135deg,#fbbf24,#f59e0b);
+    color:#000;font-size:10px;font-weight:700;
+    padding:3px 8px;border-radius:20px;font-family:'Syne',sans-serif;
+    letter-spacing:0.5px;
+  }
+  .logout-btn{
+    padding:7px 14px;background:rgba(251,113,133,0.15);
+    border:1px solid rgba(251,113,133,0.3);
+    color:#fb7185;border-radius:10px;cursor:pointer;
+    font-family:'DM Sans',sans-serif;font-size:13px;transition:all 0.3s;
+  }
+  .logout-btn:hover{background:rgba(251,113,133,0.25);}
+
+  /* PAGE LAYOUT */
+  .page{display:none;padding:28px 24px;max-width:1200px;margin:0 auto;}
+  .page.active{display:block;}
+
+  /* SECTION HEADERS */
+  .section-header{
+    display:flex;align-items:center;gap:12px;margin-bottom:24px;
+    padding-bottom:16px;border-bottom:1px solid var(--glass-border);
+  }
+  .section-header h2{
+    font-family:'Syne',sans-serif;font-size:24px;font-weight:800;
+  }
+  .section-header p{color:var(--text-muted);font-size:14px;margin-top:2px;}
+  .badge-pill{
+    padding:4px 12px;border-radius:20px;font-size:12px;font-weight:600;
+    font-family:'Syne',sans-serif;
+  }
+  .badge-school{background:rgba(167,139,250,0.2);color:var(--accent);}
+  .badge-entertain{background:rgba(251,113,133,0.2);color:var(--accent3);}
+
+  /* TWO COLUMN GRID */
+  .two-col{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
+  .three-col{display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px;}
+  @media(max-width:768px){.two-col,.three-col{grid-template-columns:1fr;}}
+
+  /* CARDS */
+  .card{padding:20px;margin-bottom:20px;}
+  .card-title{
+    font-family:'Syne',sans-serif;font-size:16px;font-weight:700;
+    margin-bottom:16px;display:flex;align-items:center;gap:8px;
+  }
+
+  /* ========== HOME / FEED ========== */
+  .feed-layout{display:grid;grid-template-columns:1fr 340px;gap:24px;}
+  @media(max-width:900px){.feed-layout{grid-template-columns:1fr;}}
+
+  /* Post composer */
+  .composer{padding:20px;margin-bottom:20px;}
+  .composer-top{display:flex;gap:12px;margin-bottom:12px;}
+  .composer-avatar{
+    width:42px;height:42px;border-radius:50%;flex-shrink:0;
+    background:linear-gradient(135deg,var(--accent),var(--accent2));
+    display:flex;align-items:center;justify-content:center;
+    font-weight:700;font-size:16px;font-family:'Syne',sans-serif;
+  }
+  .composer textarea{
+    flex:1;background:rgba(0,0,0,0.2);border:1px solid var(--glass-border);
+    border-radius:12px;padding:12px;color:var(--text);
+    font-family:'DM Sans',sans-serif;font-size:14px;
+    resize:none;outline:none;transition:border-color 0.3s;min-height:72px;
+  }
+  .composer textarea:focus{border-color:var(--accent);}
+  .composer-actions{display:flex;align-items:center;justify-content:space-between;}
+  .composer-tags{display:flex;gap:8px;flex-wrap:wrap;}
+  .tag-btn{
+    padding:5px 12px;border-radius:20px;border:1px solid;
+    cursor:pointer;font-size:12px;font-weight:500;background:transparent;
+    transition:all 0.2s;font-family:'DM Sans',sans-serif;
+  }
+  .tag-school{border-color:rgba(167,139,250,0.4);color:var(--accent);}
+  .tag-school.selected,.tag-school:hover{background:rgba(167,139,250,0.15);}
+  .tag-entertain{border-color:rgba(56,189,248,0.4);color:var(--accent2);}
+  .tag-entertain.selected,.tag-entertain:hover{background:rgba(56,189,248,0.15);}
+  .tag-sports{border-color:rgba(52,211,153,0.4);color:var(--accent4);}
+  .tag-sports.selected,.tag-sports:hover{background:rgba(52,211,153,0.15);}
+  .tag-music{border-color:rgba(251,191,36,0.4);color:var(--accent5);}
+  .tag-music.selected,.tag-music:hover{background:rgba(251,191,36,0.15);}
+  .post-btn{
+    padding:9px 20px;background:linear-gradient(135deg,var(--accent),#7c3aed);
+    border:none;border-radius:10px;color:#fff;
+    font-family:'Syne',sans-serif;font-size:13px;font-weight:700;
+    cursor:pointer;transition:all 0.3s;
+  }
+  .post-btn:hover{transform:translateY(-1px);box-shadow:0 5px 15px rgba(167,139,250,0.35);}
+
+  /* Post card */
+  .post-card{padding:20px;margin-bottom:16px;animation:fadeUp 0.4s ease;}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:translateY(0);}}
+  .post-header{display:flex;align-items:center;gap:10px;margin-bottom:12px;}
+  .post-avatar{
+    width:40px;height:40px;border-radius:50%;
+    background:linear-gradient(135deg,var(--accent3),var(--accent));
+    display:flex;align-items:center;justify-content:center;
+    font-weight:700;font-size:14px;flex-shrink:0;
+  }
+  .post-meta{flex:1;}
+  .post-name{font-weight:600;font-size:14px;}
+  .post-time{color:var(--text-muted);font-size:12px;}
+  .post-tag{
+    padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600;
+    font-family:'Syne',sans-serif;
+  }
+  .post-tag-school{background:rgba(167,139,250,0.2);color:var(--accent);}
+  .post-tag-entertain{background:rgba(56,189,248,0.2);color:var(--accent2);}
+  .post-tag-sports{background:rgba(52,211,153,0.2);color:var(--accent4);}
+  .post-tag-music{background:rgba(251,191,36,0.2);color:var(--accent5);}
+  .post-content{font-size:14px;line-height:1.6;margin-bottom:14px;color:rgba(241,245,249,0.9);}
+  .post-actions{display:flex;gap:16px;padding-top:10px;border-top:1px solid var(--glass-border);}
+  .action-btn{
+    background:transparent;border:none;color:var(--text-muted);
+    cursor:pointer;font-family:'DM Sans',sans-serif;font-size:13px;
+    display:flex;align-items:center;gap:5px;transition:all 0.2s;padding:4px 8px;border-radius:8px;
+  }
+  .action-btn:hover{color:var(--text);background:var(--glass);}
+  .action-btn.liked{color:var(--accent3);}
+  .comment-section{
+    margin-top:12px;padding-top:12px;border-top:1px solid var(--glass-border);
+    display:none;
+  }
+  .comment-section.open{display:block;}
+  .comment-input-row{display:flex;gap:8px;margin-bottom:10px;}
+  .comment-input{
+    flex:1;background:rgba(0,0,0,0.2);border:1px solid var(--glass-border);
+    border-radius:10px;padding:8px 12px;color:var(--text);
+    font-family:'DM Sans',sans-serif;font-size:13px;outline:none;
+  }
+  .comment-input:focus{border-color:var(--accent);}
+  .comment-submit{
+    padding:8px 14px;background:var(--glass-strong);border:1px solid var(--glass-border);
+    border-radius:10px;color:var(--text);cursor:pointer;font-size:13px;transition:all 0.2s;
+  }
+  .comment-submit:hover{background:rgba(167,139,250,0.2);}
+  .comment-item{
+    display:flex;gap:8px;margin-bottom:8px;
+  }
+  .comment-av{
+    width:28px;height:28px;border-radius:50%;flex-shrink:0;
+    background:linear-gradient(135deg,var(--accent2),var(--accent4));
+    display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;
+  }
+  .comment-body{background:rgba(0,0,0,0.2);border-radius:10px;padding:8px 12px;flex:1;}
+  .comment-author{font-size:12px;font-weight:600;color:var(--accent);}
+  .comment-text{font-size:13px;margin-top:2px;}
+
+  /* SIDEBAR */
+  .sidebar-widget{padding:18px;margin-bottom:16px;}
+  .widget-title{
+    font-family:'Syne',sans-serif;font-size:14px;font-weight:700;
+    margin-bottom:12px;display:flex;align-items:center;gap:6px;
+  }
+  .online-item{
+    display:flex;align-items:center;gap:8px;padding:6px 0;
+    border-bottom:1px solid rgba(255,255,255,0.06);
+  }
+  .online-item:last-child{border-bottom:none;}
+  .online-dot{width:8px;height:8px;border-radius:50%;background:var(--accent4);flex-shrink:0;}
+  .online-name{font-size:13px;}
+  .online-class{font-size:11px;color:var(--text-muted);}
+
+  /* POLL WIDGET */
+  .poll-option{
+    display:flex;align-items:center;gap:10px;
+    padding:10px 12px;border-radius:10px;
+    background:rgba(0,0,0,0.15);border:1px solid var(--glass-border);
+    cursor:pointer;margin-bottom:8px;transition:all 0.3s;
+    position:relative;overflow:hidden;
+  }
+  .poll-option:hover{border-color:var(--accent);background:rgba(167,139,250,0.08);}
+  .poll-option.voted{border-color:var(--accent);cursor:default;}
+  .poll-bar{
+    position:absolute;left:0;top:0;height:100%;
+    background:rgba(167,139,250,0.12);
+    transition:width 0.6s ease;z-index:0;border-radius:10px;
+  }
+  .poll-label{position:relative;z-index:1;flex:1;font-size:13px;}
+  .poll-pct{position:relative;z-index:1;font-size:12px;color:var(--accent);font-weight:600;}
+
+  /* ========== SCHOOL ZONE ========== */
+  .school-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;}
+  @media(max-width:900px){.school-grid{grid-template-columns:1fr;}}
+  .info-placeholder{
+    background:rgba(167,139,250,0.06);border:2px dashed rgba(167,139,250,0.25);
+    border-radius:14px;padding:28px;text-align:center;
+    color:rgba(167,139,250,0.6);font-size:14px;
+    display:flex;flex-direction:column;align-items:center;gap:8px;
+  }
+  .info-placeholder .ph-icon{font-size:32px;}
+  .info-placeholder strong{font-family:'Syne',sans-serif;font-size:15px;color:rgba(167,139,250,0.8);}
+
+  /* School post card */
+  .school-post{
+    background:rgba(0,0,0,0.2);border:1px solid var(--glass-border);
+    border-radius:14px;padding:16px;margin-bottom:12px;transition:all 0.3s;
+  }
+  .school-post:hover{border-color:rgba(167,139,250,0.3);transform:translateY(-2px);}
+  .school-post-type{
+    font-size:11px;font-weight:700;font-family:'Syne',sans-serif;
+    padding:3px 10px;border-radius:20px;display:inline-block;margin-bottom:8px;
+  }
+  .type-news{background:rgba(56,189,248,0.15);color:var(--accent2);}
+  .type-event{background:rgba(167,139,250,0.15);color:var(--accent);}
+  .type-sports{background:rgba(52,211,153,0.15);color:var(--accent4);}
+  .type-announce{background:rgba(251,191,36,0.15);color:var(--accent5);}
+  .school-post h3{font-family:'Syne',sans-serif;font-size:15px;font-weight:700;margin-bottom:6px;}
+  .school-post p{font-size:13px;color:var(--text-muted);line-height:1.6;}
+  .school-post-footer{
+    display:flex;justify-content:space-between;align-items:center;
+    margin-top:10px;padding-top:10px;border-top:1px solid rgba(255,255,255,0.07);
+  }
+  .school-post-date{font-size:12px;color:var(--text-muted);}
+
+  /* Admin post form */
+  .admin-form{padding:20px;margin-bottom:20px;}
+  .admin-form h3{font-family:'Syne',sans-serif;font-size:16px;font-weight:700;margin-bottom:16px;}
+  .admin-form select,.admin-form input,.admin-form textarea{
+    width:100%;padding:10px 14px;background:rgba(0,0,0,0.25);
+    border:1px solid var(--glass-border);border-radius:10px;color:var(--text);
+    font-family:'DM Sans',sans-serif;font-size:13px;outline:none;
+    transition:border-color 0.3s;margin-bottom:10px;
+  }
+  .admin-form select:focus,.admin-form input:focus,.admin-form textarea:focus{border-color:var(--accent5);}
+  .admin-form select option{background:#1a0a2e;}
+  .admin-form textarea{min-height:90px;resize:vertical;}
+
+  /* ========== ENTERTAINMENT ========== */
+  /* Music Charts */
+  .chart-item{
+    display:flex;align-items:center;gap:14px;padding:12px;
+    background:rgba(0,0,0,0.15);border-radius:12px;margin-bottom:8px;
+    transition:all 0.3s;border:1px solid transparent;
+  }
+  .chart-item:hover{border-color:var(--glass-border);background:rgba(255,255,255,0.05);}
+  .chart-rank{
+    font-family:'Syne',sans-serif;font-size:18px;font-weight:800;
+    width:32px;text-align:center;flex-shrink:0;
+  }
+  .rank-1{color:var(--accent5);}
+  .rank-2{color:var(--text-muted);}
+  .rank-3{color:#cd7f32;}
+  .chart-art{
+    width:48px;height:48px;border-radius:10px;flex-shrink:0;
+    display:flex;align-items:center;justify-content:center;font-size:22px;
+  }
+  .chart-info{flex:1;}
+  .chart-title{font-weight:600;font-size:14px;}
+  .chart-artist{font-size:12px;color:var(--text-muted);}
+  .chart-trend{font-size:12px;padding:3px 8px;border-radius:20px;}
+  .trend-up{background:rgba(52,211,153,0.15);color:var(--accent4);}
+  .trend-down{background:rgba(251,113,133,0.15);color:var(--accent3);}
+  .trend-same{background:rgba(255,255,255,0.08);color:var(--text-muted);}
+
+  /* Football */
+  .match-card{
+    background:rgba(0,0,0,0.2);border:1px solid var(--glass-border);
+    border-radius:14px;padding:16px;margin-bottom:12px;
+  }
+  .match-league{font-size:11px;color:var(--text-muted);margin-bottom:10px;text-transform:uppercase;letter-spacing:1px;}
+  .match-teams{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;}
+  .match-team{text-align:center;flex:1;}
+  .team-name{font-family:'Syne',sans-serif;font-size:14px;font-weight:700;}
+  .team-flag{font-size:24px;margin-bottom:4px;}
+  .match-score{
+    font-family:'Syne',sans-serif;font-size:28px;font-weight:800;
+    padding:8px 20px;background:rgba(0,0,0,0.25);border-radius:10px;
+    min-width:100px;text-align:center;
+  }
+  .match-status{text-align:center;font-size:12px;margin-top:6px;}
+  .status-live{color:var(--accent3);font-weight:700;animation:blink 1s ease-in-out infinite;}
+  @keyframes blink{0%,100%{opacity:1;}50%{opacity:0.4;};}
+  .status-ft{color:var(--text-muted);}
+
+  /* ========== POLLS PAGE ========== */
+  .polls-layout{display:grid;grid-template-columns:1fr 1fr;gap:24px;}
+  @media(max-width:768px){.polls-layout{grid-template-columns:1fr;}}
+  .poll-card{padding:24px;}
+  .poll-card h3{font-family:'Syne',sans-serif;font-size:18px;font-weight:800;margin-bottom:6px;}
+  .poll-card p{font-size:13px;color:var(--text-muted);margin-bottom:18px;}
+  .poll-weeks{font-size:12px;color:var(--accent);background:rgba(167,139,250,0.1);
+    display:inline-block;padding:3px 10px;border-radius:20px;margin-bottom:16px;}
+  .poll-total{font-size:12px;color:var(--text-muted);margin-top:10px;text-align:center;}
+  .sports-poll-option{
+    display:flex;align-items:center;gap:12px;padding:14px 16px;
+    border-radius:12px;background:rgba(0,0,0,0.15);border:1px solid var(--glass-border);
+    cursor:pointer;margin-bottom:10px;transition:all 0.3s;position:relative;overflow:hidden;
+  }
+  .sports-poll-option:hover{border-color:var(--accent4);}
+  .sports-poll-option.voted{cursor:default;border-color:var(--accent4);}
+  .sports-bar{
+    position:absolute;left:0;top:0;height:100%;
+    background:rgba(52,211,153,0.1);transition:width 0.6s ease;z-index:0;border-radius:12px;
+  }
+  .sports-opt-icon{font-size:24px;position:relative;z-index:1;}
+  .sports-opt-label{font-size:14px;font-weight:500;flex:1;position:relative;z-index:1;}
+  .sports-opt-pct{font-size:13px;color:var(--accent4);font-weight:700;position:relative;z-index:1;}
+
+  /* ========== PROFILE ========== */
+  .profile-hero{
+    padding:32px;margin-bottom:20px;text-align:center;
+    position:relative;overflow:hidden;
+  }
+  .profile-bg{
+    position:absolute;inset:0;
+    background:linear-gradient(135deg,rgba(167,139,250,0.15),rgba(56,189,248,0.1));
+  }
+  .profile-content{position:relative;z-index:1;}
+  .profile-av{
+    width:90px;height:90px;border-radius:50%;margin:0 auto 16px;
+    background:linear-gradient(135deg,var(--accent),var(--accent2));
+    display:flex;align-items:center;justify-content:center;
+    font-family:'Syne',sans-serif;font-size:32px;font-weight:800;
+    border:3px solid rgba(255,255,255,0.2);
+  }
+  .profile-name{font-family:'Syne',sans-serif;font-size:22px;font-weight:800;}
+  .profile-class{color:var(--text-muted);font-size:14px;margin:4px 0 12px;}
+  .profile-stats{display:flex;gap:24px;justify-content:center;margin-top:16px;}
+  .p-stat{text-align:center;}
+  .p-stat-num{font-family:'Syne',sans-serif;font-size:20px;font-weight:800;}
+  .p-stat-label{font-size:12px;color:var(--text-muted);}
+
+  /* ========== ANIMATIONS ========== */
+  @keyframes slideIn{from{opacity:0;transform:translateX(20px);}to{opacity:1;transform:translateX(0);}}
+  .slide-in{animation:slideIn 0.35s ease;}
+
+  /* Notification toast */
+  .toast{
+    position:fixed;bottom:28px;right:28px;z-index:1000;
+    padding:12px 20px;border-radius:12px;
+    background:rgba(52,211,153,0.15);border:1px solid rgba(52,211,153,0.3);
+    color:var(--accent4);font-size:13px;font-weight:500;
+    opacity:0;transform:translateY(10px);
+    transition:all 0.3s;pointer-events:none;
+  }
+  .toast.show{opacity:1;transform:translateY(0);}
+
+  /* Stars / decorative */
+  .star-deco{
+    position:fixed;pointer-events:none;z-index:0;
+    font-size:8px;color:rgba(255,255,255,0.15);
+    animation:twinkle 3s ease-in-out infinite;
+  }
+  @keyframes twinkle{0%,100%{opacity:0.15;}50%{opacity:0.5;};}
+
+  /* Scrollbar */
+  ::-webkit-scrollbar{width:5px;}
+  ::-webkit-scrollbar-track{background:rgba(0,0,0,0.2);}
+  ::-webkit-scrollbar-thumb{background:rgba(167,139,250,0.3);border-radius:3px;}
+
+  /* delete btn for admin */
+  .delete-post{
+    background:transparent;border:none;color:rgba(251,113,133,0.5);
+    cursor:pointer;font-size:12px;padding:3px 6px;border-radius:6px;
+    transition:all 0.2s;
+  }
+  .delete-post:hover{color:var(--accent3);background:rgba(251,113,133,0.1);}
+
+  /* ========== STORIES / HIGHLIGHTS ========== */
+  .stories-row{
+    display:flex;gap:14px;overflow-x:auto;padding-bottom:8px;margin-bottom:24px;
+    scrollbar-width:none;
+  }
+  .stories-row::-webkit-scrollbar{display:none;}
+  .story-item{
+    display:flex;flex-direction:column;align-items:center;gap:6px;
+    cursor:pointer;flex-shrink:0;
+  }
+  .story-ring{
+    width:62px;height:62px;border-radius:50%;padding:3px;
+    background:linear-gradient(135deg,var(--accent),var(--accent3),var(--accent5));
+    transition:transform 0.2s;
+  }
+  .story-ring:hover{transform:scale(1.08);}
+  .story-inner{
+    width:100%;height:100%;border-radius:50%;
+    background:linear-gradient(135deg,rgba(167,139,250,0.3),rgba(56,189,248,0.3));
+    display:flex;align-items:center;justify-content:center;
+    font-size:22px;border:2px solid rgba(15,10,30,0.8);
+  }
+  .story-label{font-size:11px;color:var(--text-muted);text-align:center;max-width:64px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+
+  /* ========== WELCOME BANNER ========== */
+  .welcome-banner{
+    padding:22px 28px;margin-bottom:24px;border-radius:20px;
+    background:linear-gradient(135deg,rgba(167,139,250,0.18),rgba(56,189,248,0.12));
+    border:1px solid rgba(167,139,250,0.25);
+    display:flex;align-items:center;justify-content:space-between;
+    position:relative;overflow:hidden;
+  }
+  .welcome-banner::after{
+    content:'🎓';font-size:80px;position:absolute;right:24px;top:50%;
+    transform:translateY(-50%);opacity:0.12;pointer-events:none;
+  }
+  .welcome-banner h3{font-family:'Syne',sans-serif;font-size:20px;font-weight:800;margin-bottom:4px;}
+  .welcome-banner p{color:var(--text-muted);font-size:13px;}
+  .welcome-close{
+    background:transparent;border:none;color:var(--text-muted);cursor:pointer;
+    font-size:18px;padding:4px;transition:color 0.2s;position:relative;z-index:1;
+  }
+  .welcome-close:hover{color:var(--text);}
+
+  /* ========== NOTIFICATION BELL ========== */
+  .notif-btn{
+    position:relative;background:var(--glass);border:1px solid var(--glass-border);
+    border-radius:10px;width:38px;height:38px;display:flex;align-items:center;
+    justify-content:center;cursor:pointer;font-size:18px;transition:all 0.2s;
+  }
+  .notif-btn:hover{background:var(--glass-strong);}
+  .notif-dot{
+    position:absolute;top:6px;right:6px;width:8px;height:8px;
+    background:var(--accent3);border-radius:50%;border:2px solid rgba(10,5,30,1);
+  }
+  .notif-dropdown{
+    position:absolute;top:50px;right:0;width:300px;z-index:200;
+    padding:16px;display:none;
+  }
+  .notif-dropdown.open{display:block;animation:fadeUp 0.25s ease;}
+  .notif-item{
+    display:flex;gap:10px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.07);
+  }
+  .notif-item:last-child{border-bottom:none;}
+  .notif-icon{font-size:20px;flex-shrink:0;}
+  .notif-text{font-size:13px;line-height:1.4;}
+  .notif-time{font-size:11px;color:var(--text-muted);margin-top:2px;}
+
+  /* ========== LEADERBOARD ========== */
+  .lb-item{
+    display:flex;align-items:center;gap:14px;padding:12px 14px;
+    background:rgba(0,0,0,0.15);border-radius:12px;margin-bottom:8px;
+    border:1px solid transparent;transition:all 0.3s;
+  }
+  .lb-item:hover{border-color:var(--glass-border);}
+  .lb-item.top1{background:rgba(251,191,36,0.08);border-color:rgba(251,191,36,0.2);}
+  .lb-item.top2{background:rgba(241,245,249,0.05);border-color:rgba(241,245,249,0.1);}
+  .lb-item.top3{background:rgba(205,127,50,0.06);border-color:rgba(205,127,50,0.15);}
+  .lb-rank{font-family:'Syne',sans-serif;font-size:16px;font-weight:800;width:28px;text-align:center;}
+  .lb-av{
+    width:38px;height:38px;border-radius:50%;flex-shrink:0;
+    display:flex;align-items:center;justify-content:center;
+    font-weight:700;font-size:13px;font-family:'Syne',sans-serif;
+  }
+  .lb-info{flex:1;}
+  .lb-name{font-weight:600;font-size:14px;}
+  .lb-class{font-size:12px;color:var(--text-muted);}
+  .lb-score{font-family:'Syne',sans-serif;font-size:15px;font-weight:800;color:var(--accent);}
+
+  /* ========== SPORTS PAGE ========== */
+  .sports-hero{
+    background:linear-gradient(135deg,rgba(52,211,153,0.12),rgba(56,189,248,0.08));
+    border:1px solid rgba(52,211,153,0.2);
+    padding:24px;border-radius:20px;margin-bottom:28px;
+    display:flex;align-items:center;gap:20px;
+  }
+  .sports-hero-icon{font-size:56px;}
+  .sports-hero h2{font-family:'Syne',sans-serif;font-size:22px;font-weight:800;}
+  .sports-hero p{color:var(--text-muted);font-size:14px;margin-top:4px;}
+
+  .fixture-card{
+    padding:16px 20px;border-radius:14px;
+    background:rgba(0,0,0,0.18);border:1px solid var(--glass-border);
+    margin-bottom:12px;transition:all 0.3s;
+  }
+  .fixture-card:hover{transform:translateY(-2px);border-color:rgba(52,211,153,0.3);}
+  .fixture-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;}
+  .fixture-sport{font-size:11px;font-weight:700;font-family:'Syne',sans-serif;
+    padding:3px 10px;border-radius:20px;background:rgba(52,211,153,0.15);color:var(--accent4);}
+  .fixture-date{font-size:12px;color:var(--text-muted);}
+  .fixture-match{display:flex;align-items:center;justify-content:center;gap:16px;}
+  .fixture-team{text-align:center;font-family:'Syne',sans-serif;font-size:14px;font-weight:700;flex:1;}
+  .fixture-vs{
+    font-family:'Syne',sans-serif;font-size:11px;font-weight:800;
+    background:rgba(255,255,255,0.08);padding:6px 14px;border-radius:8px;
+    color:var(--text-muted);letter-spacing:1px;
+  }
+  .fixture-result{
+    font-family:'Syne',sans-serif;font-size:20px;font-weight:800;
+    background:rgba(52,211,153,0.12);padding:6px 16px;border-radius:8px;
+    color:var(--accent4);
+  }
+
+  /* Athlete of month */
+  .athlete-card{
+    padding:20px;text-align:center;
+  }
+  .athlete-av{
+    width:80px;height:80px;border-radius:50%;margin:0 auto 12px;
+    background:linear-gradient(135deg,var(--accent4),var(--accent2));
+    display:flex;align-items:center;justify-content:center;
+    font-size:30px;font-weight:800;font-family:'Syne',sans-serif;
+    border:3px solid rgba(52,211,153,0.3);
+  }
+  .athlete-name{font-family:'Syne',sans-serif;font-size:16px;font-weight:800;}
+  .athlete-sport{font-size:13px;color:var(--accent4);margin:4px 0;}
+  .athlete-stat{
+    display:inline-block;background:rgba(52,211,153,0.1);border:1px solid rgba(52,211,153,0.2);
+    padding:6px 16px;border-radius:20px;font-size:12px;margin-top:8px;
+  }
+
+  /* ========== ADMIN DASHBOARD ========== */
+  .admin-stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:28px;}
+  @media(max-width:768px){.admin-stat-grid{grid-template-columns:1fr 1fr;}}
+  .admin-stat-card{
+    padding:18px;text-align:center;
+    background:rgba(0,0,0,0.2);border:1px solid var(--glass-border);border-radius:16px;
+  }
+  .admin-stat-icon{font-size:28px;margin-bottom:8px;}
+  .admin-stat-num{font-family:'Syne',sans-serif;font-size:26px;font-weight:800;}
+  .admin-stat-label{font-size:12px;color:var(--text-muted);margin-top:4px;}
+
+  /* Tabs for admin sections */
+  .admin-tabs{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap;}
+  .admin-tab-btn{
+    padding:8px 16px;background:rgba(0,0,0,0.2);border:1px solid var(--glass-border);
+    border-radius:10px;color:var(--text-muted);cursor:pointer;
+    font-family:'DM Sans',sans-serif;font-size:13px;transition:all 0.2s;
+  }
+  .admin-tab-btn.active{background:rgba(251,191,36,0.15);border-color:rgba(251,191,36,0.4);color:var(--accent5);}
+
+  /* User management table */
+  .user-table{width:100%;border-collapse:collapse;}
+  .user-table th{
+    text-align:left;padding:10px 12px;font-size:12px;font-weight:700;
+    font-family:'Syne',sans-serif;color:var(--text-muted);
+    border-bottom:1px solid var(--glass-border);letter-spacing:0.5px;
+  }
+  .user-table td{
+    padding:10px 12px;font-size:13px;border-bottom:1px solid rgba(255,255,255,0.05);
+  }
+  .user-table tr:hover td{background:rgba(255,255,255,0.03);}
+  .role-badge{
+    padding:3px 8px;border-radius:20px;font-size:11px;font-weight:700;font-family:'Syne',sans-serif;
+  }
+  .role-admin{background:rgba(251,191,36,0.2);color:var(--accent5);}
+  .role-student{background:rgba(167,139,250,0.15);color:var(--accent);}
+
+  /* ========== EMOJI REACTIONS ========== */
+  .reactions-row{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px;}
+  .reaction-chip{
+    display:inline-flex;align-items:center;gap:4px;
+    padding:4px 10px;border-radius:20px;font-size:13px;
+    background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.1);
+    cursor:pointer;transition:all 0.2s;
+  }
+  .reaction-chip:hover,.reaction-chip.reacted{background:rgba(167,139,250,0.15);border-color:rgba(167,139,250,0.3);}
+  .reaction-count{font-size:12px;color:var(--text-muted);}
+
+  /* ========== FILTER BAR ========== */
+  .filter-bar{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap;}
+  .filter-chip{
+    padding:6px 14px;border-radius:20px;border:1px solid var(--glass-border);
+    background:transparent;color:var(--text-muted);cursor:pointer;
+    font-family:'DM Sans',sans-serif;font-size:13px;transition:all 0.2s;
+  }
+  .filter-chip:hover{color:var(--text);background:var(--glass);}
+  .filter-chip.active{background:var(--glass-strong);color:var(--text);border-color:var(--accent);}
+
+  /* Search bar */
+  .search-bar{
+    display:flex;align-items:center;gap:10px;
+    padding:10px 16px;border-radius:14px;
+    background:rgba(0,0,0,0.25);border:1px solid var(--glass-border);
+    margin-bottom:20px;
+  }
+  .search-bar input{
+    flex:1;background:transparent;border:none;color:var(--text);
+    font-family:'DM Sans',sans-serif;font-size:14px;outline:none;
+  }
+  .search-bar input::placeholder{color:var(--text-muted);}
+
+  /* ========== RESPONSIVE NAV ========== */
+  @media(max-width:700px){
+    .nav-tabs{display:none;}
+    .mobile-nav{display:flex!important;}
+  }
+  .mobile-nav{
+    display:none;position:fixed;bottom:0;left:0;right:0;z-index:100;
+    background:rgba(10,5,30,0.92);backdrop-filter:blur(20px);
+    border-top:1px solid var(--glass-border);
+    padding:8px 0 12px;justify-content:space-around;
+  }
+  .mob-tab{
+    display:flex;flex-direction:column;align-items:center;gap:3px;
+    background:none;border:none;color:var(--text-muted);cursor:pointer;
+    font-family:'DM Sans',sans-serif;font-size:10px;padding:4px 8px;
+    border-radius:10px;transition:color 0.2s;
+  }
+  .mob-tab.active{color:var(--accent);}
+  .mob-tab span{font-size:20px;}
+
+  /* ========== SCROLL TO TOP ========== */
+  .scroll-top{
+    position:fixed;bottom:80px;right:24px;z-index:99;
+    width:42px;height:42px;border-radius:50%;
+    background:linear-gradient(135deg,var(--accent),#7c3aed);
+    border:none;color:#fff;font-size:18px;cursor:pointer;
+    display:none;align-items:center;justify-content:center;
+    box-shadow:0 4px 16px rgba(167,139,250,0.4);transition:all 0.3s;
+  }
+  .scroll-top.visible{display:flex;}
+  .scroll-top:hover{transform:scale(1.1);}
+</style>
+</head>
+<body>
+
+<!-- Decorative stars -->
+<div class="star-deco" style="top:15%;left:10%;animation-delay:0s;">✦</div>
+<div class="star-deco" style="top:30%;left:80%;animation-delay:0.8s;">✦</div>
+<div class="star-deco" style="top:60%;left:5%;animation-delay:1.6s;">✦</div>
+<div class="star-deco" style="top:80%;left:90%;animation-delay:0.4s;">✦</div>
+<div class="star-deco" style="top:45%;left:50%;animation-delay:2s;">✦</div>
+
+<!-- Orbs -->
+<div class="orb orb1"></div>
+<div class="orb orb2"></div>
+<div class="orb orb3"></div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<!-- ===================== AUTH SCREEN ===================== -->
+<div id="auth-screen" class="screen active">
+  <div class="auth-container">
+    <div class="auth-logo">
+      <span class="logo-icon">🎓</span>
+      <h1>Student Hub</h1>
+      <p>Your school's social universe 🌍</p>
+    </div>
+    <div class="auth-card glass">
+      <div class="auth-tabs">
+        <button class="auth-tab active" onclick="switchAuthTab('login')">Sign In</button>
+        <button class="auth-tab" onclick="switchAuthTab('register')">Create Account</button>
+      </div>
+
+      <!-- LOGIN -->
+      <div class="auth-form active" id="form-login">
+        <div class="form-group">
+          <label>Email Address</label>
+          <input type="email" id="login-email" placeholder="your.email@school.com">
+        </div>
+        <div class="form-group">
+          <label>Password</label>
+          <input type="password" id="login-pass" placeholder="Enter password">
+        </div>
+        <p class="error-msg" id="login-err">❌ Invalid credentials. Try again.</p>
+        <button class="btn-primary" onclick="handleLogin()">Sign In 🚀</button>
+      </div>
+
+      <!-- REGISTER -->
+      <div class="auth-form" id="form-register">
+        <div class="form-group">
+          <label>Full Name</label>
+          <input type="text" id="reg-name" placeholder="e.g. Amara Nkosi">
+        </div>
+        <div class="form-group">
+          <label>Email Address</label>
+          <input type="email" id="reg-email" placeholder="your.email@school.com">
+        </div>
+        <div class="form-group">
+          <label>Class / Grade</label>
+          <select id="reg-class">
+            <option value="">-- Select your class --</option>
+            <option>Form 1</option>
+            <option>Form 2</option>
+            <option>Form 3</option>
+            <option>Form 4</option>
+            <option>Form 5</option>
+            <option>Form 6</option>
+            <option>A-Level 1</option>
+            <option>A-Level 2</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Password</label>
+          <input type="password" id="reg-pass" placeholder="Min 6 characters">
+        </div>
+        <p class="error-msg" id="reg-err"></p>
+        <button class="btn-primary" onclick="handleRegister()">Create Account ✨</button>
+      </div>
+    </div>
+    <p style="text-align:center;color:var(--text-muted);font-size:12px;margin-top:16px;">
+      🔒 Admin login: <strong>admin@school.com</strong> / <strong>admin123</strong>
+    </p>
+  </div>
+</div>
+
+<!-- ===================== APP SCREEN ===================== -->
+<div id="app-screen" class="screen">
+
+  <!-- TOP NAV -->
+  <nav class="topnav">
+    <div class="nav-logo">🎓 Hub</div>
+    <div class="nav-tabs">
+      <button class="nav-tab active" onclick="switchPage('feed')" data-page="feed">🏠 Feed</button>
+      <button class="nav-tab" onclick="switchPage('school')" data-page="school">🏫 School Zone</button>
+      <button class="nav-tab" onclick="switchPage('sports')" data-page="sports">⚽ Sports</button>
+      <button class="nav-tab" onclick="switchPage('entertain')" data-page="entertain">🎵 Entertainment</button>
+      <button class="nav-tab" onclick="switchPage('polls')" data-page="polls">🗳️ Polls</button>
+      <button class="nav-tab" onclick="switchPage('leaderboard')" data-page="leaderboard">🏆 Board</button>
+      <button class="nav-tab" onclick="switchPage('profile')" data-page="profile">👤 Profile</button>
+      <button class="nav-tab" id="admin-nav-tab" onclick="switchPage('admin')" data-page="admin" style="display:none;">⚡ Admin</button>
+    </div>
+    <div class="nav-right" style="position:relative;">
+      <span id="nav-admin-badge" class="admin-badge" style="display:none;">⚡ ADMIN</span>
+      <div style="position:relative;">
+        <button class="notif-btn" onclick="toggleNotif()" title="Notifications">🔔<div class="notif-dot" id="notif-dot"></div></button>
+        <div class="notif-dropdown glass-dark" id="notif-dropdown">
+          <div style="font-family:'Syne',sans-serif;font-size:13px;font-weight:700;margin-bottom:12px;">🔔 Notifications</div>
+          <div id="notif-list"></div>
+        </div>
+      </div>
+      <button class="avatar-btn" id="nav-avatar" onclick="switchPage('profile')">?</button>
+      <button class="logout-btn" onclick="handleLogout()">Logout</button>
+    </div>
+  </nav>
+
+  <!-- =========== FEED PAGE =========== -->
+  <div id="page-feed" class="page active">
+    <div class="feed-layout">
+      <!-- Main Feed -->
+      <div>
+        <!-- Welcome Banner -->
+        <div class="welcome-banner" id="welcome-banner">
+          <div>
+            <h3>Welcome back, <span id="welcome-name">Student</span>! 👋</h3>
+            <p>Here's what's happening at school today ✨</p>
+          </div>
+          <button class="welcome-close" onclick="document.getElementById('welcome-banner').style.display='none'">✕</button>
+        </div>
+
+        <!-- Stories -->
+        <div class="stories-row" id="stories-row"></div>
+
+        <div class="section-header">
+          <div>
+            <h2>🌊 What's the Wave?</h2>
+            <p>See what's happening across the school</p>
+          </div>
+        </div>
+
+        <!-- Filter Bar -->
+        <div class="filter-bar">
+          <button class="filter-chip active" data-filter="all" onclick="filterFeed(this,'all')">🌍 All</button>
+          <button class="filter-chip" data-filter="school" onclick="filterFeed(this,'school')">🏫 School</button>
+          <button class="filter-chip" data-filter="sports" onclick="filterFeed(this,'sports')">⚽ Sports</button>
+          <button class="filter-chip" data-filter="music" onclick="filterFeed(this,'music')">🎤 Music</button>
+          <button class="filter-chip" data-filter="entertain" onclick="filterFeed(this,'entertain')">🎵 Entertainment</button>
+        </div>
+
+        <!-- Composer (everyone can post to general feed) -->
+        <div class="composer glass">
+          <div class="composer-top">
+            <div class="composer-avatar" id="composer-av">?</div>
+            <textarea id="post-input" placeholder="What's on your mind? 💭 Share something with the hub..."></textarea>
+          </div>
+          <div class="composer-actions">
+            <div class="composer-tags">
+              <button class="tag-btn tag-school selected" data-tag="school" onclick="selectTag(this)">🏫 School</button>
+              <button class="tag-btn tag-entertain" data-tag="entertain" onclick="selectTag(this)">🎵 Entertainment</button>
+              <button class="tag-btn tag-sports" data-tag="sports" onclick="selectTag(this)">⚽ Sports</button>
+              <button class="tag-btn tag-music" data-tag="music" onclick="selectTag(this)">🎤 Music</button>
+            </div>
+            <button class="post-btn" onclick="createPost()">Post 🚀</button>
+          </div>
+        </div>
+
+        <!-- Posts Feed -->
+        <div id="posts-container"></div>
+      </div>
+
+      <!-- Sidebar -->
+      <div>
+        <!-- Online Students -->
+        <div class="sidebar-widget glass">
+          <div class="widget-title">🟢 Online Now <span style="color:var(--accent4);font-size:12px;margin-left:auto;" id="online-count">5 online</span></div>
+          <div id="online-list"></div>
+        </div>
+
+        <!-- Quick Song Poll -->
+        <div class="sidebar-widget glass">
+          <div class="widget-title">🎵 Song of the Week</div>
+          <p style="font-size:12px;color:var(--text-muted);margin-bottom:12px;">Vote for your favourite banger this week 🔥</p>
+          <div id="song-poll-sidebar"></div>
+          <p class="poll-total" id="song-poll-total"></p>
+        </div>
+
+        <!-- Quick Stats -->
+        <div class="sidebar-widget glass">
+          <div class="widget-title">📊 Hub Stats</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+            <div style="text-align:center;padding:10px;background:rgba(0,0,0,0.15);border-radius:10px;">
+              <div style="font-family:'Syne',sans-serif;font-size:20px;font-weight:800;color:var(--accent);" id="stat-students">0</div>
+              <div style="font-size:11px;color:var(--text-muted);">Students</div>
+            </div>
+            <div style="text-align:center;padding:10px;background:rgba(0,0,0,0.15);border-radius:10px;">
+              <div style="font-family:'Syne',sans-serif;font-size:20px;font-weight:800;color:var(--accent2);" id="stat-posts">0</div>
+              <div style="font-size:11px;color:var(--text-muted);">Posts</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- =========== SCHOOL ZONE PAGE =========== -->
+  <div id="page-school" class="page">
+    <div class="section-header">
+      <div>
+        <h2>🏫 School Zone</h2>
+        <p>Official news, events, sports & announcements from your school</p>
+      </div>
+      <span class="badge-pill badge-school">Official</span>
+    </div>
+
+    <!-- Admin Post Form (only visible to admin) -->
+    <div id="admin-school-form" style="display:none;">
+      <div class="admin-form glass">
+        <h3>⚡ Post to School Zone</h3>
+        <select id="school-post-type">
+          <option value="news">📰 School News</option>
+          <option value="event">📅 Event</option>
+          <option value="sports">⚽ School Sports</option>
+          <option value="announce">📢 Announcement</option>
+        </select>
+        <input type="text" id="school-post-title" placeholder="Title / Headline">
+        <textarea id="school-post-body" placeholder="Write the full content here..."></textarea>
+        <button class="post-btn" onclick="adminPostSchool()">📌 Post to School Zone</button>
+      </div>
+    </div>
+
+    <div class="school-grid">
+      <!-- NEWS & ANNOUNCEMENTS -->
+      <div>
+        <div class="card-title" style="margin-bottom:16px;">📰 News & Announcements</div>
+        <div id="school-news-container">
+          <!-- Placeholder for admin to fill -->
+          <div class="info-placeholder">
+            <span class="ph-icon">📋</span>
+            <strong>School News Goes Here</strong>
+            <p>Admin will post the latest school news, announcements and updates here.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- EVENTS -->
+      <div>
+        <div class="card-title" style="margin-bottom:16px;">📅 Events & Activities</div>
+        <div id="school-events-container">
+          <div class="info-placeholder">
+            <span class="ph-icon">🎉</span>
+            <strong>Upcoming Events</strong>
+            <p>School events, parent meetings, cultural days and more will appear here.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- SCHOOL SPORTS -->
+      <div>
+        <div class="card-title" style="margin-bottom:16px;">⚽ School Sports</div>
+        <div id="school-sports-container">
+          <div class="info-placeholder">
+            <span class="ph-icon">🏆</span>
+            <strong>School Sports Updates</strong>
+            <p>Match results, fixtures, and achievements from your school's sports teams.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- GALLERY / NOTICES -->
+      <div>
+        <div class="card-title" style="margin-bottom:16px;">📢 Notice Board</div>
+        <div id="school-notice-container">
+          <div class="info-placeholder">
+            <span class="ph-icon">📌</span>
+            <strong>Important Notices</strong>
+            <p>Exam timetables, uniform notices, fee reminders and important information.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- =========== ENTERTAINMENT PAGE =========== -->
+  <div id="page-entertain" class="page">
+    <div class="section-header">
+      <div>
+        <h2>🎵 Entertainment Zone</h2>
+        <p>Music charts, football scores and outside-school vibes 🔥</p>
+      </div>
+      <span class="badge-pill badge-entertain">Vibes Only</span>
+    </div>
+
+    <!-- Admin Post Buttons for Entertainment -->
+    <div id="admin-entertain-form" style="display:none;">
+      <div class="admin-form glass" style="margin-bottom:24px;">
+        <h3>⚡ Post Entertainment Update</h3>
+        <select id="ent-post-type">
+          <option value="football">⚽ Football Update</option>
+          <option value="music">🎵 Music News</option>
+          <option value="general">🎬 General Entertainment</option>
+        </select>
+        <input type="text" id="ent-post-title" placeholder="Headline">
+        <textarea id="ent-post-body" placeholder="Details..."></textarea>
+        <button class="post-btn" style="background:linear-gradient(135deg,var(--accent3),#e11d48);" onclick="adminPostEntertain()">🎵 Post Entertainment Update</button>
+      </div>
+    </div>
+
+    <div class="two-col">
+      <!-- MUSIC CHARTS -->
+      <div>
+        <div class="card glass" style="margin-bottom:0;">
+          <div class="card-title">🎵 Music Charts <span style="font-size:12px;color:var(--text-muted);font-weight:400;">Top tracks this week</span></div>
+          <div id="music-charts"></div>
+          <!-- Entertainment placeholder -->
+          <div class="info-placeholder" style="margin-top:16px;">
+            <span class="ph-icon">🎤</span>
+            <strong>Add Your School's Favourites</strong>
+            <p>Admin can add trending songs and music news specific to your students here.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- FOOTBALL -->
+      <div>
+        <div class="card glass" style="margin-bottom:0;">
+          <div class="card-title">⚽ Football Updates <span style="font-size:12px;color:var(--text-muted);font-weight:400;">Latest results</span></div>
+          <div id="football-results"></div>
+          <div class="info-placeholder" style="margin-top:16px;">
+            <span class="ph-icon">🏟️</span>
+            <strong>Football Updates</strong>
+            <p>Admin can post local football news, tournaments and match analysis here.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Admin posted entertainment -->
+    <div id="entertain-posts-container" style="margin-top:24px;"></div>
+  </div>
+
+  <!-- =========== POLLS PAGE =========== -->
+  <div id="page-polls" class="page">
+    <div class="section-header">
+      <div>
+        <h2>🗳️ Weekly Polls</h2>
+        <p>Vote, debate, and see what the school thinks 🔥</p>
+      </div>
+    </div>
+
+    <div class="polls-layout">
+      <!-- SONG POLL -->
+      <div class="poll-card glass" id="poll-card-songs">
+        <div class="poll-weeks">Week 24, 2025</div>
+        <h3>🎵 Song of the Week</h3>
+        <p>Which track is the biggest banger this week? Vote and settle the debate! 🎤</p>
+        <div id="song-poll-main"></div>
+        <p class="poll-total" id="song-poll-main-total"></p>
+      </div>
+
+      <!-- SPORTS POLL FOR THE BOYS 😂 -->
+      <div class="poll-card glass" id="poll-card-goat">
+        <div class="poll-weeks">🔥 Lads' Poll</div>
+        <h3>⚽ Sports Debate</h3>
+        <p>Who wins this one? The boys decide 😤👊</p>
+        <div id="sports-poll-main"></div>
+        <p class="poll-total" id="sports-poll-main-total"></p>
+      </div>
+
+      <!-- BEST TEAM POLL -->
+      <div class="poll-card glass" id="poll-card-teams">
+        <div class="poll-weeks">Champions League</div>
+        <h3>🏆 Best Team Vibes?</h3>
+        <p>Who's got the best squad this season? No debates, just vote 😂</p>
+        <div id="team-poll-main"></div>
+        <p class="poll-total" id="team-poll-main-total"></p>
+      </div>
+
+      <!-- SCHOOL SPORTS POLL -->
+      <div class="poll-card glass" id="poll-card-schoolsport">
+        <div class="poll-weeks">School Edition</div>
+        <h3>🥇 School Sport King?</h3>
+        <p>Which sport reigns supreme in school? Let the students decide 🏅</p>
+        <div id="school-sport-poll"></div>
+        <p class="poll-total" id="school-sport-poll-total"></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- =========== SPORTS PAGE =========== -->
+  <div id="page-sports" class="page">
+    <div class="sports-hero glass">
+      <div class="sports-hero-icon">🏆</div>
+      <div>
+        <h2>School Sports Centre</h2>
+        <p>Fixtures, results, athlete spotlights & more — the full sports experience 🥇</p>
+      </div>
+    </div>
+
+    <!-- Admin Sports Post Form -->
+    <div id="admin-sports-form" style="display:none;">
+      <div class="admin-form glass" style="margin-bottom:24px;">
+        <h3>⚽ Post Sports Update</h3>
+        <select id="sports-post-type">
+          <option value="fixture">📅 Upcoming Fixture</option>
+          <option value="result">✅ Match Result</option>
+          <option value="athlete">🌟 Athlete Spotlight</option>
+          <option value="news">📰 Sports News</option>
+        </select>
+        <input type="text" id="sports-post-title" placeholder="e.g. U17 Football vs Riverside Secondary">
+        <textarea id="sports-post-body" placeholder="Details — date, time, venue, scorers, notes..."></textarea>
+        <button class="post-btn" style="background:linear-gradient(135deg,var(--accent4),#059669);" onclick="adminPostSports()">⚽ Post Sports Update</button>
+      </div>
+    </div>
+
+    <div class="two-col" style="margin-bottom:24px;">
+      <!-- Fixtures & Results -->
+      <div>
+        <div class="card-title" style="margin-bottom:16px;">📅 Fixtures & Results</div>
+        <div id="sports-fixtures-container">
+          <div class="info-placeholder">
+            <span class="ph-icon">📋</span>
+            <strong>Fixtures Coming Soon</strong>
+            <p>Admin will post upcoming matches and results here.</p>
+          </div>
+        </div>
+        <!-- Default sample fixtures -->
+        <div id="sports-default-fixtures"></div>
+      </div>
+
+      <!-- Athlete Spotlight + School Sports News -->
+      <div>
+        <div class="card-title" style="margin-bottom:16px;">🌟 Athlete Spotlight</div>
+        <div class="athlete-card glass" style="margin-bottom:20px;">
+          <div class="athlete-av" id="athlete-av-icon">🏃</div>
+          <div class="athlete-name" id="athlete-name">[ Your School Star ]</div>
+          <div class="athlete-sport" id="athlete-sport">Sport • Class</div>
+          <div class="athlete-stat" id="athlete-stat">Add athlete info here</div>
+          <p style="font-size:13px;color:var(--text-muted);margin-top:12px;line-height:1.6;" id="athlete-bio">
+            Admin can update this section with the athlete of the month — their stats, achievements and a short bio.
+          </p>
+        </div>
+
+        <div class="card-title" style="margin-bottom:16px;">📰 Sports News</div>
+        <div id="sports-news-container">
+          <div class="info-placeholder">
+            <span class="ph-icon">🗞️</span>
+            <strong>School Sports News</strong>
+            <p>Latest sports news, team announcements and training schedules.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sports Table -->
+    <div>
+      <div class="card-title" style="margin-bottom:16px;">🏅 School League Table</div>
+      <div class="glass" style="padding:20px;overflow-x:auto;">
+        <table class="user-table" style="min-width:400px;">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Team / House</th>
+              <th>P</th>
+              <th>W</th>
+              <th>D</th>
+              <th>L</th>
+              <th>Pts</th>
+            </tr>
+          </thead>
+          <tbody id="league-table-body">
+            <tr><td colspan="7" style="text-align:center;color:var(--text-muted);padding:20px;">
+              Admin will populate the league table — edit the data in the Admin panel 📋
+            </td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- =========== LEADERBOARD PAGE =========== -->
+  <div id="page-leaderboard" class="page">
+    <div class="section-header">
+      <div>
+        <h2>🏆 Hub Leaderboard</h2>
+        <p>The most active students on the platform this month 🔥</p>
+      </div>
+    </div>
+
+    <div class="two-col">
+      <div>
+        <div class="card glass">
+          <div class="card-title">🎖️ Top Contributors</div>
+          <div id="leaderboard-list"></div>
+        </div>
+      </div>
+      <div>
+        <div class="card glass" style="margin-bottom:20px;">
+          <div class="card-title">📊 Activity Breakdown</div>
+          <div id="activity-breakdown"></div>
+        </div>
+        <div class="card glass">
+          <div class="card-title">🔥 This Week's Highlights</div>
+          <div id="weekly-highlights"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- =========== ADMIN DASHBOARD =========== -->
+  <div id="page-admin" class="page">
+    <div class="section-header">
+      <div>
+        <h2>⚡ Admin Dashboard</h2>
+        <p>Manage the Student Hub — post, moderate, and view analytics</p>
+      </div>
+      <span class="admin-badge" style="font-size:13px;padding:5px 14px;">ADMIN ONLY</span>
+    </div>
+
+    <!-- Stats -->
+    <div class="admin-stat-grid" id="admin-stats-grid"></div>
+
+    <!-- Admin Tabs -->
+    <div class="admin-tabs">
+      <button class="admin-tab-btn active" onclick="switchAdminTab('users',this)">👥 Users</button>
+      <button class="admin-tab-btn" onclick="switchAdminTab('posts',this)">📝 Posts</button>
+      <button class="admin-tab-btn" onclick="switchAdminTab('polls',this)">🗳️ Edit Polls</button>
+      <button class="admin-tab-btn" onclick="switchAdminTab('music',this)">🎵 Music Charts</button>
+      <button class="admin-tab-btn" onclick="switchAdminTab('football',this)">⚽ Match Results</button>
+      <button class="admin-tab-btn" onclick="switchAdminTab('league',this)">📊 League Table</button>
+      <button class="admin-tab-btn" onclick="switchAdminTab('athlete',this)">🌟 Athlete</button>
+    </div>
+
+    <div id="admin-tab-users">
+      <div class="glass" style="padding:20px;overflow-x:auto;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+          <div style="font-family:'Syne',sans-serif;font-size:14px;font-weight:700;">Registered Students</div>
+          <div id="user-count-label" style="font-size:13px;color:var(--text-muted);"></div>
+        </div>
+        <table class="user-table" id="admin-users-table">
+          <thead><tr><th>Name</th><th>Email</th><th>Class</th><th>Role</th><th>Action</th></tr></thead>
+          <tbody id="admin-users-body"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div id="admin-tab-posts" style="display:none;">
+      <div class="glass" style="padding:20px;">
+        <div style="font-family:'Syne',sans-serif;font-size:14px;font-weight:700;margin-bottom:16px;">All Feed Posts</div>
+        <div id="admin-posts-list"></div>
+      </div>
+    </div>
+
+    <!-- POLLS EDITOR TAB -->
+    <div id="admin-tab-polls" style="display:none;">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+        ${['songs','goat','teams','schoolsport'].map(slug => `
+        <div class="glass" style="padding:18px;">
+          <div style="font-family:'Syne',sans-serif;font-size:13px;font-weight:700;margin-bottom:12px;" id="admin-poll-title-${slug}">Loading...</div>
+          <button class="post-btn" style="width:100%;font-size:13px;" onclick="openPollEditor('hub_poll_${slug}')">✏️ Edit This Poll</button>
+        </div>`).join('')}
+      </div>
+      <p style="font-size:13px;color:var(--text-muted);margin-top:16px;">💡 Click Edit to change the poll title, question, options and optionally reset votes for a fresh round.</p>
+    </div>
+
+    <!-- MUSIC CHARTS EDITOR TAB -->
+    <div id="admin-tab-music" style="display:none;">
+      <div class="glass" style="padding:20px;">
+        <div style="font-family:'Syne',sans-serif;font-size:14px;font-weight:700;margin-bottom:4px;">🎵 Edit Music Charts</div>
+        <p style="font-size:13px;color:var(--text-muted);margin-bottom:16px;">Update the top 5 songs displayed in the Entertainment page.</p>
+        <div id="music-editor-rows"></div>
+        <button class="post-btn" style="margin-top:12px;" onclick="saveMusicCharts()">💾 Save Music Charts</button>
+      </div>
+    </div>
+
+    <!-- FOOTBALL RESULTS EDITOR TAB -->
+    <div id="admin-tab-football" style="display:none;">
+      <div class="glass" style="padding:20px;">
+        <div style="font-family:'Syne',sans-serif;font-size:14px;font-weight:700;margin-bottom:4px;">⚽ Edit Match Results</div>
+        <p style="font-size:13px;color:var(--text-muted);margin-bottom:16px;">Update match results shown in the Entertainment page. Status: FT (Full Time) or LIVE.</p>
+        <div id="football-editor-rows"></div>
+        <button class="post-btn" style="background:linear-gradient(135deg,var(--accent4),#059669);margin-top:12px;margin-right:10px;" onclick="addFootballRow()">➕ Add Match</button>
+        <button class="post-btn" style="margin-top:12px;" onclick="saveFootballResults()">💾 Save Results</button>
+      </div>
+    </div>
+
+    <div id="admin-tab-league" style="display:none;">
+      <div class="glass" style="padding:20px;">
+        <div style="font-family:'Syne',sans-serif;font-size:14px;font-weight:700;margin-bottom:16px;">⚽ Edit League Table</div>
+        <p style="font-size:13px;color:var(--text-muted);margin-bottom:16px;">Enter team data below. Click Save to update the sports page table.</p>
+        <textarea id="league-data-input" style="width:100%;background:rgba(0,0,0,0.25);border:1px solid var(--glass-border);border-radius:10px;padding:12px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:13px;min-height:160px;outline:none;resize:vertical;" placeholder='Enter teams as JSON, e.g.:
+[{"name":"Eagles FC","p":8,"w":6,"d":1,"l":1,"pts":19},
+ {"name":"Lions FC","p":8,"w":5,"d":2,"l":1,"pts":17}]'></textarea>
+        <button class="post-btn" style="margin-top:10px;" onclick="saveLeagueTable()">💾 Save League Table</button>
+      </div>
+    </div>
+
+    <div id="admin-tab-athlete" style="display:none;">
+      <div class="glass" style="padding:20px;max-width:500px;">
+        <div style="font-family:'Syne',sans-serif;font-size:14px;font-weight:700;margin-bottom:16px;">🌟 Update Athlete Spotlight</div>
+        <input type="text" id="ath-name" placeholder="Athlete Name" style="width:100%;background:rgba(0,0,0,0.25);border:1px solid var(--glass-border);border-radius:10px;padding:10px 14px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:13px;outline:none;margin-bottom:10px;">
+        <input type="text" id="ath-sport" placeholder="Sport & Class e.g. Football • Form 5" style="width:100%;background:rgba(0,0,0,0.25);border:1px solid var(--glass-border);border-radius:10px;padding:10px 14px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:13px;outline:none;margin-bottom:10px;">
+        <input type="text" id="ath-stat" placeholder="Key stat e.g. 12 Goals This Season" style="width:100%;background:rgba(0,0,0,0.25);border:1px solid var(--glass-border);border-radius:10px;padding:10px 14px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:13px;outline:none;margin-bottom:10px;">
+        <input type="text" id="ath-icon" placeholder="Emoji icon e.g. ⚽ or 🏀" style="width:100%;background:rgba(0,0,0,0.25);border:1px solid var(--glass-border);border-radius:10px;padding:10px 14px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:13px;outline:none;margin-bottom:10px;">
+        <textarea id="ath-bio" placeholder="Short bio / achievements..." style="width:100%;background:rgba(0,0,0,0.25);border:1px solid var(--glass-border);border-radius:10px;padding:10px 14px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:13px;outline:none;min-height:90px;resize:vertical;margin-bottom:10px;"></textarea>
+        <button class="post-btn" onclick="saveAthleteSpotlight()">🌟 Update Spotlight</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- =========== PROFILE PAGE =========== -->
+  <div id="page-profile" class="page">
+    <div class="profile-hero glass">
+      <div class="profile-bg"></div>
+      <div class="profile-content">
+        <div class="profile-av" id="profile-av">?</div>
+        <div class="profile-name" id="profile-name">Loading...</div>
+        <div class="profile-class" id="profile-class">Class •</div>
+        <div id="profile-admin-tag" style="display:none;margin-bottom:8px;">
+          <span class="admin-badge">⚡ ADMIN ACCOUNT</span>
+        </div>
+        <div class="profile-stats">
+          <div class="p-stat">
+            <div class="p-stat-num" id="p-stat-posts">0</div>
+            <div class="p-stat-label">Posts</div>
+          </div>
+          <div class="p-stat">
+            <div class="p-stat-num" id="p-stat-likes">0</div>
+            <div class="p-stat-label">Likes Given</div>
+          </div>
+          <div class="p-stat">
+            <div class="p-stat-num" id="p-stat-comments">0</div>
+            <div class="p-stat-label">Comments</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="two-col">
+      <div>
+        <div class="card glass">
+          <div class="card-title">📝 My Posts</div>
+          <div id="my-posts-container">
+            <p style="color:var(--text-muted);font-size:14px;">No posts yet. Share something! 🚀</p>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="card glass">
+          <div class="card-title">ℹ️ Account Info</div>
+          <div style="display:flex;flex-direction:column;gap:12px;">
+            <div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--glass-border);">
+              <span style="color:var(--text-muted);font-size:14px;">Name</span>
+              <span style="font-weight:500;font-size:14px;" id="info-name">—</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--glass-border);">
+              <span style="color:var(--text-muted);font-size:14px;">Email</span>
+              <span style="font-weight:500;font-size:14px;" id="info-email">—</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--glass-border);">
+              <span style="color:var(--text-muted);font-size:14px;">Class</span>
+              <span style="font-weight:500;font-size:14px;" id="info-class">—</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;padding:10px 0;">
+              <span style="color:var(--text-muted);font-size:14px;">Role</span>
+              <span style="font-weight:500;font-size:14px;" id="info-role">—</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- end app-screen -->
+
+<script>
+// =============================================
+//  DATA STORE  (localStorage)
+// =============================================
+function getData(key, def) {
+  try { const v = localStorage.getItem(key); return v ? JSON.parse(v) : def; }
+  catch(e) { return def; }
+}
+function setData(key, val) {
+  localStorage.setItem(key, JSON.stringify(val));
+}
+
+// =============================================
+//  INIT DATA
+// =============================================
+function initDefaults() {
+  // Admin account always exists
+  const users = getData('hub_users', []);
+  if (!users.find(u => u.email === 'admin@school.com')) {
+    users.push({ id: 'admin', name: 'Admin', email: 'admin@school.com', pass: 'admin123', classGrade: 'Staff', role: 'admin' });
+    setData('hub_users', users);
+  }
+  if (!getData('hub_posts', null)) setData('hub_posts', getDefaultPosts());
+  if (!getData('hub_school_posts', null)) setData('hub_school_posts', []);
+  if (!getData('hub_ent_posts', null)) setData('hub_ent_posts', []);
+  if (!getData('hub_song_votes', null)) setData('hub_song_votes', { Tyla_Water:12, Seun_Kuti_African_Glitch:9, Burna_Boy_City_Boys:15, Afrobeats_Mix:7 });
+  if (!getData('hub_sports_votes', null)) setData('hub_sports_votes', { Messi:22, Ronaldo:18, Mbappe:14, Vinicius:8 });
+  if (!getData('hub_team_votes', null)) setData('hub_team_votes', { ManCity:14, Arsenal:19, Liverpool:11, Chelsea:7 });
+  if (!getData('hub_school_sport_votes', null)) setData('hub_school_sport_votes', { Football:25, Basketball:18, Athletics:12, Volleyball:9 });
+  if (!getData('hub_online', null)) {
+    setData('hub_online', [
+      { name: 'Aisha M.', cls: 'Form 4' }, { name: 'Kofi B.', cls: 'Form 3' },
+      { name: 'Zara T.', cls: 'Form 5' }, { name: 'Deji A.', cls: 'Form 4' },
+      { name: 'Nina K.', cls: 'Form 2' }
+    ]);
+  }
+}
+
+function getDefaultPosts() {
+  return [
+    { id: 'p1', author: 'Admin', authorId: 'admin', tag: 'school', content: '🎉 Welcome to Student Hub — your school\'s official social platform! Stay connected, stay informed and keep vibing 🔥', time: Date.now()-3600000, likes: ['u1','u2'], comments: [] },
+    { id: 'p2', author: 'Kofi B.', authorId: 'u_kofi', tag: 'sports', content: '⚽ Did anyone watch the Afcon match last night?? Absolute madness!! Who\'s your pick to win the whole thing? 🏆', time: Date.now()-7200000, likes: ['u1'], comments: [{ author: 'Aisha M.', text: 'Nigeria all day!! 🇳🇬🔥', time: Date.now()-6800000 }] },
+    { id: 'p3', author: 'Zara T.', authorId: 'u_zara', tag: 'music', content: '🎵 Tyla\'s new album is absolutely insane you guys need to listen NOW. The vibes are immaculate ✨', time: Date.now()-10800000, likes: ['u1','u2','u3'], comments: [] },
+  ];
+}
+
+// =============================================
+//  AUTH
+// =============================================
+let currentUser = null;
+
+function switchAuthTab(tab) {
+  document.querySelectorAll('.auth-tab').forEach((t,i) => t.classList.toggle('active', (i===0&&tab==='login')||(i===1&&tab==='register')));
+  document.getElementById('form-login').classList.toggle('active', tab==='login');
+  document.getElementById('form-register').classList.toggle('active', tab==='register');
+}
+
+function handleLogin() {
+  const email = document.getElementById('login-email').value.trim().toLowerCase();
+  const pass = document.getElementById('login-pass').value;
+  const users = getData('hub_users', []);
+  const user = users.find(u => u.email.toLowerCase() === email && u.pass === pass);
+  if (!user) { document.getElementById('login-err').classList.add('show'); return; }
+  document.getElementById('login-err').classList.remove('show');
+  loginUser(user);
+}
+
+function handleRegister() {
+  const name = document.getElementById('reg-name').value.trim();
+  const email = document.getElementById('reg-email').value.trim().toLowerCase();
+  const cls = document.getElementById('reg-class').value;
+  const pass = document.getElementById('reg-pass').value;
+  const errEl = document.getElementById('reg-err');
+
+  if (!name || !email || !cls || !pass) { errEl.textContent = '❌ Please fill in all fields.'; errEl.classList.add('show'); return; }
+  if (pass.length < 6) { errEl.textContent = '❌ Password must be at least 6 characters.'; errEl.classList.add('show'); return; }
+
+  const users = getData('hub_users', []);
+  if (users.find(u => u.email.toLowerCase() === email)) {
+    errEl.textContent = '❌ An account with this email already exists!'; errEl.classList.add('show'); return;
+  }
+  errEl.classList.remove('show');
+
+  const newUser = { id: 'u_' + Date.now(), name, email, pass, classGrade: cls, role: 'student' };
+  users.push(newUser);
+  setData('hub_users', users);
+
+  // Add to online list
+  const online = getData('hub_online', []);
+  online.push({ name: name.split(' ')[0] + ' ' + (name.split(' ')[1]?name.split(' ')[1][0]+'.':''), cls });
+  setData('hub_online', online);
+
+  loginUser(newUser);
+}
+
+function loginUser(user) {
+  currentUser = user;
+  sessionStorage.setItem('hub_session', user.id);
+  document.getElementById('auth-screen').classList.remove('active');
+  document.getElementById('app-screen').classList.add('active');
+  setupUI();
+}
+
+function handleLogout() {
+  currentUser = null;
+  sessionStorage.removeItem('hub_session');
+  document.getElementById('app-screen').classList.remove('active');
+  document.getElementById('auth-screen').classList.add('active');
+  switchPage('feed');
+}
+
+// =============================================
+//  SETUP UI
+// =============================================
+function setupUI() {
+  const initials = currentUser.name.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
+  document.getElementById('nav-avatar').textContent = initials;
+  document.getElementById('composer-av').textContent = initials;
+  document.getElementById('profile-av').textContent = initials;
+  document.getElementById('profile-name').textContent = currentUser.name;
+  document.getElementById('profile-class').textContent = currentUser.classGrade + ' • 🎓';
+  document.getElementById('info-name').textContent = currentUser.name;
+  document.getElementById('info-email').textContent = currentUser.email;
+  document.getElementById('info-class').textContent = currentUser.classGrade;
+  document.getElementById('info-role').textContent = currentUser.role === 'admin' ? '⚡ Administrator' : '🎓 Student';
+
+  if (currentUser.role === 'admin') {
+    document.getElementById('nav-admin-badge').style.display = 'inline-block';
+    document.getElementById('admin-school-form').style.display = 'block';
+    document.getElementById('admin-entertain-form').style.display = 'block';
+    document.getElementById('profile-admin-tag').style.display = 'block';
+  }
+
+  renderFeed();
+  renderSidebar();
+  renderPolls();
+  renderSchoolZone();
+  renderEntertainment();
+  updateStats();
+}
+
+// =============================================
+//  PAGE SWITCHING
+// =============================================
+function switchPage(page) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('page-' + page).classList.add('active');
+  document.querySelector(`[data-page="${page}"]`)?.classList.add('active');
+  if (page === 'profile') renderProfile();
+}
+
+// =============================================
+//  FEED
+// =============================================
+let selectedTag = 'school';
+function selectTag(btn) {
+  document.querySelectorAll('.tag-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  selectedTag = btn.dataset.tag;
+}
+
+function createPost() {
+  const content = document.getElementById('post-input').value.trim();
+  if (!content) { showToast('✍️ Write something first!'); return; }
+  const posts = getData('hub_posts', []);
+  const newPost = {
+    id: 'p_' + Date.now(),
+    author: currentUser.name,
+    authorId: currentUser.id,
+    tag: selectedTag,
+    content,
+    time: Date.now(),
+    likes: [],
+    comments: []
+  };
+  posts.unshift(newPost);
+  setData('hub_posts', posts);
+  document.getElementById('post-input').value = '';
+  renderFeed();
+  updateStats();
+  showToast('🚀 Post shared with the Hub!');
+}
+
+function renderFeed() {
+  const posts = getData('hub_posts', []);
+  const container = document.getElementById('posts-container');
+  container.innerHTML = '';
+  posts.forEach(post => {
+    container.appendChild(makePostCard(post));
+  });
+}
+
+function makePostCard(post) {
+  const el = document.createElement('div');
+  el.className = 'post-card glass';
+  el.id = 'post-' + post.id;
+  const initials = post.author.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
+  const isLiked = post.likes.includes(currentUser?.id || '');
+  const tagLabels = { school:'🏫 School', entertain:'🎵 Entertainment', sports:'⚽ Sports', music:'🎤 Music' };
+  const tagClass = { school:'post-tag-school', entertain:'post-tag-entertain', sports:'post-tag-sports', music:'post-tag-music' };
+  const timeAgo = getTimeAgo(post.time);
+  const isMyPost = post.authorId === currentUser?.id || currentUser?.role === 'admin';
+
+  el.innerHTML = `
+    <div class="post-header">
+      <div class="post-avatar">${initials}</div>
+      <div class="post-meta">
+        <div class="post-name">${esc(post.author)}</div>
+        <div class="post-time">${timeAgo}</div>
+      </div>
+      <span class="post-tag ${tagClass[post.tag]||'post-tag-school'}">${tagLabels[post.tag]||'🏫 School'}</span>
+      ${isMyPost && post.authorId !== 'admin' ? `<button class="delete-post" onclick="deletePost('${post.id}')">🗑️</button>` : ''}
+    </div>
+    <div class="post-content">${esc(post.content)}</div>
+    <div class="post-actions">
+      <button class="action-btn ${isLiked?'liked':''}" onclick="toggleLike('${post.id}')">
+        ${isLiked?'❤️':'🤍'} ${post.likes.length} Like${post.likes.length!==1?'s':''}
+      </button>
+      <button class="action-btn" onclick="toggleComments('${post.id}')">
+        💬 ${post.comments.length} Comment${post.comments.length!==1?'s':''}
+      </button>
+    </div>
+    <div class="comment-section" id="comments-${post.id}">
+      <div class="comment-input-row">
+        <input class="comment-input" id="cinput-${post.id}" placeholder="Add a comment... 💬" onkeydown="if(event.key==='Enter')submitComment('${post.id}')">
+        <button class="comment-submit" onclick="submitComment('${post.id}')">Send</button>
+      </div>
+      <div id="clist-${post.id}">${renderComments(post.comments)}</div>
+    </div>
+  `;
+  return el;
+}
+
+function renderComments(comments) {
+  return comments.map(c => {
+    const initials = c.author.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
+    return `<div class="comment-item">
+      <div class="comment-av">${initials}</div>
+      <div class="comment-body">
+        <div class="comment-author">${esc(c.author)}</div>
+        <div class="comment-text">${esc(c.text)}</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function toggleLike(postId) {
+  const posts = getData('hub_posts', []);
+  const post = posts.find(p => p.id === postId);
+  if (!post) return;
+  const idx = post.likes.indexOf(currentUser.id);
+  if (idx === -1) post.likes.push(currentUser.id);
+  else post.likes.splice(idx, 1);
+  setData('hub_posts', posts);
+  renderFeed();
+}
+
+function toggleComments(postId) {
+  const el = document.getElementById('comments-' + postId);
+  if (el) el.classList.toggle('open');
+}
+
+function submitComment(postId) {
+  const input = document.getElementById('cinput-' + postId);
+  const text = input?.value.trim();
+  if (!text) return;
+  const posts = getData('hub_posts', []);
+  const post = posts.find(p => p.id === postId);
+  if (!post) return;
+  post.comments.push({ author: currentUser.name, text, time: Date.now() });
+  setData('hub_posts', posts);
+  input.value = '';
+  document.getElementById('clist-' + postId).innerHTML = renderComments(post.comments);
+  // update button count
+  renderFeed();
+  document.getElementById('comments-' + postId)?.classList.add('open');
+}
+
+function deletePost(postId) {
+  if (!confirm('Delete this post?')) return;
+  const posts = getData('hub_posts', []).filter(p => p.id !== postId);
+  setData('hub_posts', posts);
+  renderFeed();
+  updateStats();
+  showToast('🗑️ Post deleted.');
+}
+
+// =============================================
+//  SIDEBAR
+// =============================================
+function renderSidebar() {
+  // Online
+  const online = getData('hub_online', []);
+  document.getElementById('online-count').textContent = online.length + ' online';
+  document.getElementById('online-list').innerHTML = online.slice(0,6).map(u => `
+    <div class="online-item">
+      <div class="online-dot"></div>
+      <div>
+        <div class="online-name">${esc(u.name)}</div>
+        <div class="online-class">${esc(u.cls)}</div>
+      </div>
+    </div>`).join('');
+
+  // Song poll sidebar
+  renderSongPoll('song-poll-sidebar', 'song-poll-total', true);
+  updateStats();
+}
+
+function updateStats() {
+  const users = getData('hub_users', []);
+  const posts = getData('hub_posts', []);
+  document.getElementById('stat-students').textContent = users.length;
+  document.getElementById('stat-posts').textContent = posts.length;
+}
+
+// =============================================
+//  POLLS  — fully dynamic, admin-editable
+// =============================================
+
+// Default poll data (used only on first run, then stored in localStorage)
+const DEFAULT_POLLS = {
+  hub_poll_songs: {
+    title: '🎵 Song of the Week',
+    question: 'Which track is the biggest banger this week?',
+    week: 'Week 24, 2025',
+    options: [
+      { key: 'opt1', label: 'Tyla — Water', icon: '💦' },
+      { key: 'opt2', label: 'Seun Kuti — African Glitch', icon: '🎺' },
+      { key: 'opt3', label: 'Burna Boy — City Boys', icon: '🔥' },
+      { key: 'opt4', label: 'Afrobeats Mix of the Week', icon: '🎶' },
+    ]
+  },
+  hub_poll_goat: {
+    title: '⚽ The GOAT Debate',
+    question: 'Who is the greatest footballer of all time? The boys decide 😤',
+    week: '🔥 Lads\' Poll',
+    options: [
+      { key: 'opt1', label: 'Messi', icon: '🇦🇷' },
+      { key: 'opt2', label: 'Cristiano Ronaldo', icon: '🇵🇹' },
+      { key: 'opt3', label: 'Mbappé', icon: '🇫🇷' },
+      { key: 'opt4', label: 'Vinicius Jr.', icon: '🇧🇷' },
+    ]
+  },
+  hub_poll_teams: {
+    title: '🏆 Best Club Team?',
+    question: 'Who\'s got the best squad this season? No debates, just vote 😂',
+    week: 'Champions League',
+    options: [
+      { key: 'opt1', label: 'Man City', icon: '💙' },
+      { key: 'opt2', label: 'Arsenal', icon: '🔴' },
+      { key: 'opt3', label: 'Liverpool', icon: '🌟' },
+      { key: 'opt4', label: 'Chelsea', icon: '💎' },
+    ]
+  },
+  hub_poll_schoolsport: {
+    title: '🥇 School Sport King?',
+    question: 'Which sport reigns supreme in school? Let the students decide 🏅',
+    week: 'School Edition',
+    options: [
+      { key: 'opt1', label: 'Football', icon: '⚽' },
+      { key: 'opt2', label: 'Basketball', icon: '🏀' },
+      { key: 'opt3', label: 'Athletics', icon: '🏃' },
+      { key: 'opt4', label: 'Volleyball', icon: '🏐' },
+    ]
+  }
+};
+
+function getPollData(pollKey) {
+  return getData(pollKey, DEFAULT_POLLS[pollKey]);
+}
+
+function renderPoll(containerId, totalId, pollKey, barColor='rgba(167,139,250,0.12)', pctColor='var(--accent)') {
+  const poll = getPollData(pollKey);
+  if (!poll) return;
+  const votes = getData(pollKey + '_votes', {});
+  const userVoted = getData(pollKey + '_voted_' + (currentUser?.id||''), null);
+  const total = Object.values(votes).reduce((a,b)=>a+b,0);
+  const container = document.getElementById(containerId);
+  if (!container) return;
+
+  container.innerHTML = poll.options.map(s => {
+    const v = votes[s.key] || 0;
+    const pct = total > 0 ? Math.round(v/total*100) : 0;
+    const clickFn = userVoted ? '' : `castPollVote('${pollKey}','${s.key}','${containerId}','${totalId}','${barColor}','${pctColor}')`;
+    return `<div class="poll-option ${userVoted?'voted':''}" onclick="${clickFn}">
+      <div class="poll-bar" style="width:${pct}%;background:${barColor};border-radius:10px;"></div>
+      <span style="font-size:18px;position:relative;z-index:1;">${esc(s.icon)}</span>
+      <span class="poll-label" style="position:relative;z-index:1;">${esc(s.label)}</span>
+      ${userVoted ? `<span class="poll-pct" style="color:${pctColor};position:relative;z-index:1;">${pct}%</span>` : ''}
+    </div>`;
+  }).join('');
+
+  const totalEl = document.getElementById(totalId);
+  if (totalEl) totalEl.textContent = `Total votes: ${total}`;
+}
+
+function castPollVote(pollKey, optKey, containerId, totalId, barColor, pctColor) {
+  const votedKey = pollKey + '_voted_' + currentUser.id;
+  if (getData(votedKey, null)) { showToast('✅ You already voted on this one!'); return; }
+  const votes = getData(pollKey + '_votes', {});
+  votes[optKey] = (votes[optKey] || 0) + 1;
+  setData(pollKey + '_votes', votes);
+  setData(votedKey, optKey);
+  renderPolls();
+  renderSongPollSidebar();
+  showToast('🗳️ Vote cast! Results updated 🎉');
+}
+
+// Sidebar song poll shortcut
+function renderSongPollSidebar() {
+  renderPoll('song-poll-sidebar', 'song-poll-total', 'hub_poll_songs', 'rgba(167,139,250,0.15)', 'var(--accent)');
+  const poll = getPollData('hub_poll_songs');
+  // Update sidebar widget title if poll title changed
+  const el = document.getElementById('song-poll-sidebar');
+  if (el && poll) {
+    const parent = el.closest('.sidebar-widget');
+    if (parent) {
+      const titleEl = parent.querySelector('.widget-title');
+      if (titleEl) titleEl.innerHTML = `${poll.title}`;
+    }
+  }
+}
+
+// Legacy alias so old castVote calls still work
+function castVote(vk,ok,votedK,cid,tid){ castPollVote('hub_poll_songs',ok,cid,tid,'rgba(167,139,250,0.15)','var(--accent)'); }
+function castVoteGeneric(vk,ok,votedK,cid,tid){
+  const map = {
+    'sports-poll-main':'hub_poll_goat',
+    'team-poll-main':'hub_poll_teams',
+    'school-sport-poll':'hub_poll_schoolsport'
+  };
+  castPollVote(map[cid]||'hub_poll_goat', ok, cid, tid, 'rgba(52,211,153,0.1)', 'var(--accent4)');
+}
+
+function renderPolls() {
+  // Update titles and questions from stored poll data
+  ['songs','goat','teams','schoolsport'].forEach(slug => {
+    const key = 'hub_poll_' + slug;
+    const poll = getPollData(key);
+    if (!poll) return;
+    const card = document.getElementById('poll-card-' + slug);
+    if (card) {
+      const h3 = card.querySelector('h3');
+      const p = card.querySelector('p');
+      const wk = card.querySelector('.poll-weeks');
+      if (h3) h3.textContent = poll.title;
+      if (p) p.textContent = poll.question;
+      if (wk) wk.textContent = poll.week;
+    }
+  });
+
+  renderPoll('song-poll-main',     'song-poll-main-total',    'hub_poll_songs',       'rgba(167,139,250,0.15)', 'var(--accent)');
+  renderPoll('sports-poll-main',   'sports-poll-main-total',  'hub_poll_goat',        'rgba(52,211,153,0.1)',   'var(--accent4)');
+  renderPoll('team-poll-main',     'team-poll-main-total',    'hub_poll_teams',       'rgba(56,189,248,0.1)',   'var(--accent2)');
+  renderPoll('school-sport-poll',  'school-sport-poll-total', 'hub_poll_schoolsport', 'rgba(251,191,36,0.1)',   'var(--accent5)');
+  renderSongPollSidebar();
+}
+
+// =============================================
+//  ADMIN POLL EDITOR
+// =============================================
+function openPollEditor(pollKey) {
+  const poll = getPollData(pollKey);
+  if (!poll) return;
+  const overlay = document.getElementById('poll-editor-overlay');
+  document.getElementById('pe-poll-key').value = pollKey;
+  document.getElementById('pe-title').value = poll.title;
+  document.getElementById('pe-question').value = poll.question;
+  document.getElementById('pe-week').value = poll.week;
+  poll.options.forEach((opt, i) => {
+    const iconEl = document.getElementById('pe-icon-' + i);
+    const labelEl = document.getElementById('pe-label-' + i);
+    if (iconEl) iconEl.value = opt.icon;
+    if (labelEl) labelEl.value = opt.label;
+  });
+  overlay.style.display = 'flex';
+}
+
+function closePollEditor() {
+  document.getElementById('poll-editor-overlay').style.display = 'none';
+}
+
+function savePollEdit() {
+  const pollKey = document.getElementById('pe-poll-key').value;
+  const poll = getPollData(pollKey);
+  if (!poll) return;
+  poll.title    = document.getElementById('pe-title').value.trim() || poll.title;
+  poll.question = document.getElementById('pe-question').value.trim() || poll.question;
+  poll.week     = document.getElementById('pe-week').value.trim() || poll.week;
+  poll.options.forEach((opt, i) => {
+    const icon  = document.getElementById('pe-icon-' + i)?.value.trim();
+    const label = document.getElementById('pe-label-' + i)?.value.trim();
+    if (icon)  opt.icon  = icon;
+    if (label) opt.label = label;
+  });
+  setData(pollKey, poll);
+
+  // Reset votes + user votes for fresh poll
+  if (document.getElementById('pe-reset-votes').checked) {
+    setData(pollKey + '_votes', {});
+    // Clear all user votes for this poll from every registered user
+    getData('hub_users', []).forEach(u => {
+      localStorage.removeItem(pollKey + '_voted_' + u.id);
+    });
+    showToast('🗳️ Poll updated & votes reset! Fresh start 🔄');
+  } else {
+    showToast('✅ Poll updated successfully!');
+  }
+
+  closePollEditor();
+  renderPolls();
+}
+
+// =============================================
+//  SCHOOL ZONE
+// =============================================
+function adminPostSchool() {
+  if (currentUser?.role !== 'admin') return;
+  const type = document.getElementById('school-post-type').value;
+  const title = document.getElementById('school-post-title').value.trim();
+  const body = document.getElementById('school-post-body').value.trim();
+  if (!title || !body) { showToast('❌ Fill in title and content!'); return; }
+  const posts = getData('hub_school_posts', []);
+  posts.unshift({ id: 'sp_'+Date.now(), type, title, body, time: Date.now() });
+  setData('hub_school_posts', posts);
+  document.getElementById('school-post-title').value = '';
+  document.getElementById('school-post-body').value = '';
+  renderSchoolZone();
+  showToast('📌 Posted to School Zone!');
+}
+
+function renderSchoolZone() {
+  const posts = getData('hub_school_posts', []);
+  const news = posts.filter(p => p.type==='news' || p.type==='announce');
+  const events = posts.filter(p => p.type==='event');
+  const sports = posts.filter(p => p.type==='sports');
+
+  const newsEl = document.getElementById('school-news-container');
+  const eventsEl = document.getElementById('school-events-container');
+  const sportsEl = document.getElementById('school-sports-container');
+
+  if (news.length > 0) {
+    newsEl.innerHTML = news.map(p => schoolPostHTML(p)).join('');
+  }
+  if (events.length > 0) {
+    eventsEl.innerHTML = events.map(p => schoolPostHTML(p)).join('');
+  }
+  if (sports.length > 0) {
+    sportsEl.innerHTML = sports.map(p => schoolPostHTML(p)).join('');
+  }
+}
+
+function schoolPostHTML(p) {
+  const typeLabels = { news:'📰 News', event:'📅 Event', sports:'⚽ Sports', announce:'📢 Announcement' };
+  const typeClass = { news:'type-news', event:'type-event', sports:'type-sports', announce:'type-announce' };
+  const adminDelete = currentUser?.role==='admin' ? `<button class="delete-post" onclick="deleteSchoolPost('${p.id}')">🗑️</button>` : '';
+  return `<div class="school-post">
+    <span class="school-post-type ${typeClass[p.type]||'type-news'}">${typeLabels[p.type]||'📰'}</span>
+    <h3>${esc(p.title)}</h3>
+    <p>${esc(p.body)}</p>
+    <div class="school-post-footer">
+      <span class="school-post-date">🕐 ${getTimeAgo(p.time)}</span>
+      ${adminDelete}
+    </div>
+  </div>`;
+}
+
+function deleteSchoolPost(id) {
+  if (!confirm('Delete post?')) return;
+  setData('hub_school_posts', getData('hub_school_posts',[]).filter(p=>p.id!==id));
+  renderSchoolZone();
+  showToast('🗑️ Post deleted.');
+}
+
+// =============================================
+//  ENTERTAINMENT  — fully editable
+// =============================================
+const DEFAULT_MUSIC_CHARTS = [
+  { rank:1, title:'TYLA — Water', artist:'Tyla', icon:'💜', trend:'up' },
+  { rank:2, title:'Burna Boy — City Boys', artist:'Burna Boy', icon:'🔥', trend:'same' },
+  { rank:3, title:'Seun Kuti — African Glitch', artist:'Seun Kuti', icon:'🎺', trend:'up' },
+  { rank:4, title:'Davido — Unavailable', artist:'Davido ft. Musa Keys', icon:'🌟', trend:'down' },
+  { rank:5, title:'Wizkid — Kese', artist:'Wizkid', icon:'⭐', trend:'up' },
+];
+
+const DEFAULT_FOOTBALL = [
+  { league:'Premier League', home:'Arsenal', homeFlag:'🔴', away:'Manchester City', awayFlag:'💙', score:'2 - 2', status:'FT' },
+  { league:'Champions League', home:'Real Madrid', homeFlag:'⚪', away:'Bayern Munich', awayFlag:'🔴', score:'3 - 1', status:'FT' },
+  { league:'AFCON 2025', home:'Nigeria', homeFlag:'🇳🇬', away:'Senegal', awayFlag:'🇸🇳', score:'1 - 0', status:'LIVE' },
+  { league:'La Liga', home:'Barcelona', homeFlag:'🔵🔴', away:'Atletico', awayFlag:'🔴⚪', score:'4 - 2', status:'FT' },
+];
+
+function getMusicCharts() { return getData('hub_music_charts', DEFAULT_MUSIC_CHARTS); }
+function getFootballResults() { return getData('hub_football_results', DEFAULT_FOOTBALL); }
+
+function renderEntertainment() {
+  // Music Charts
+  const mc = document.getElementById('music-charts');
+  if (mc) mc.innerHTML = getMusicCharts().map(s => `
+    <div class="chart-item">
+      <div class="chart-rank rank-${s.rank}">${s.rank}</div>
+      <div class="chart-art">${esc(s.icon)}</div>
+      <div class="chart-info">
+        <div class="chart-title">${esc(s.title)}</div>
+        <div class="chart-artist">${esc(s.artist)}</div>
+      </div>
+      <span class="chart-trend ${s.trend==='up'?'trend-up':s.trend==='down'?'trend-down':'trend-same'}">
+        ${s.trend==='up'?'↑ Rising':s.trend==='down'?'↓ Falling':'→ Stable'}
+      </span>
+    </div>`).join('');
+
+  // Football Results
+  const fr = document.getElementById('football-results');
+  if (fr) fr.innerHTML = getFootballResults().map(m => `
+    <div class="match-card">
+      <div class="match-league">${esc(m.league)}</div>
+      <div class="match-teams">
+        <div class="match-team"><div class="team-flag">${esc(m.homeFlag)}</div><div class="team-name">${esc(m.home)}</div></div>
+        <div class="match-score">${esc(m.score)}</div>
+        <div class="match-team"><div class="team-flag">${esc(m.awayFlag)}</div><div class="team-name">${esc(m.away)}</div></div>
+      </div>
+      <div class="match-status ${m.status==='LIVE'?'status-live':'status-ft'}">${m.status==='LIVE'?'🔴 LIVE':'✅ Full Time'}</div>
+    </div>`).join('');
+
+  renderEntertainPosts();
+}
+
+function adminPostEntertain() {
+  if (currentUser?.role !== 'admin') return;
+  const type = document.getElementById('ent-post-type').value;
+  const title = document.getElementById('ent-post-title').value.trim();
+  const body = document.getElementById('ent-post-body').value.trim();
+  if (!title || !body) { showToast('❌ Fill in title and content!'); return; }
+  const posts = getData('hub_ent_posts', []);
+  posts.unshift({ id: 'ep_'+Date.now(), type, title, body, time: Date.now() });
+  setData('hub_ent_posts', posts);
+  document.getElementById('ent-post-title').value = '';
+  document.getElementById('ent-post-body').value = '';
+  renderEntertainPosts();
+  showToast('🎵 Entertainment update posted!');
+}
+
+function renderEntertainPosts() {
+  const posts = getData('hub_ent_posts', []);
+  const container = document.getElementById('entertain-posts-container');
+  if (!posts.length) { container.innerHTML = ''; return; }
+  const typeIcons = { football:'⚽', music:'🎵', general:'🎬' };
+  container.innerHTML = `<div class="card-title" style="margin-bottom:16px;">🔥 Latest Entertainment Updates</div>` +
+    posts.map(p => `<div class="school-post">
+      <span class="school-post-type type-${p.type==='football'?'sports':p.type==='music'?'news':'event'}">${typeIcons[p.type]||'🎬'} ${p.type.charAt(0).toUpperCase()+p.type.slice(1)}</span>
+      <h3>${esc(p.title)}</h3>
+      <p>${esc(p.body)}</p>
+      <div class="school-post-footer">
+        <span class="school-post-date">🕐 ${getTimeAgo(p.time)}</span>
+        ${currentUser?.role==='admin'?`<button class="delete-post" onclick="deleteEntPost('${p.id}')">🗑️</button>`:''}
+      </div>
+    </div>`).join('');
+}
+
+function deleteEntPost(id) {
+  setData('hub_ent_posts', getData('hub_ent_posts',[]).filter(p=>p.id!==id));
+  renderEntertainPosts();
+  showToast('🗑️ Post deleted.');
+}
+
+// =============================================
+//  PROFILE
+// =============================================
+function renderProfile() {
+  const posts = getData('hub_posts', []);
+  const myPosts = posts.filter(p => p.authorId === currentUser.id);
+  const myLikes = posts.reduce((a,p)=>(p.likes.includes(currentUser.id)?a+1:a),0);
+  const myComments = posts.reduce((a,p)=>a+p.comments.filter(c=>c.author===currentUser.name).length,0);
+
+  document.getElementById('p-stat-posts').textContent = myPosts.length;
+  document.getElementById('p-stat-likes').textContent = myLikes;
+  document.getElementById('p-stat-comments').textContent = myComments;
+
+  const myPostsEl = document.getElementById('my-posts-container');
+  if (myPosts.length === 0) {
+    myPostsEl.innerHTML = `<p style="color:var(--text-muted);font-size:14px;">No posts yet. Share something! 🚀</p>`;
+  } else {
+    myPostsEl.innerHTML = myPosts.slice(0,5).map(p => `
+      <div style="padding:10px 0;border-bottom:1px solid var(--glass-border);">
+        <div style="font-size:12px;color:var(--text-muted);margin-bottom:4px;">${getTimeAgo(p.time)}</div>
+        <div style="font-size:14px;line-height:1.5;">${esc(p.content.slice(0,120))}${p.content.length>120?'…':''}</div>
+        <div style="font-size:12px;color:var(--text-muted);margin-top:4px;">❤️ ${p.likes.length} · 💬 ${p.comments.length}</div>
+      </div>`).join('');
+  }
+}
+
+// =============================================
+//  UTILS
+// =============================================
+function esc(s) {
+  if (!s) return '';
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function getTimeAgo(ts) {
+  const diff = (Date.now() - ts) / 1000;
+  if (diff < 60) return 'Just now';
+  if (diff < 3600) return Math.floor(diff/60) + 'm ago';
+  if (diff < 86400) return Math.floor(diff/3600) + 'h ago';
+  return Math.floor(diff/86400) + 'd ago';
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2800);
+}
+
+// =============================================
+//  SESSION RESTORE
+// =============================================
+function tryRestoreSession() {
+  const sid = sessionStorage.getItem('hub_session');
+  if (sid) {
+    const users = getData('hub_users', []);
+    const user = users.find(u => u.id === sid);
+    if (user) { loginUser(user); return; }
+  }
+}
+
+// =============================================
+//  EXTRA FEATURES — STORIES
+// =============================================
+const STORY_DATA = [
+  { icon:'📚', label:'Study Tips' },
+  { icon:'🏆', label:'Sports' },
+  { icon:'🎵', label:'Music' },
+  { icon:'😂', label:'Memes' },
+  { icon:'🌍', label:'Travel' },
+  { icon:'📸', label:'Photos' },
+  { icon:'🎮', label:'Gaming' },
+  { icon:'🍕', label:'Food' },
+];
+function renderStories() {
+  const row = document.getElementById('stories-row');
+  if (!row) return;
+  row.innerHTML = STORY_DATA.map(s => `
+    <div class="story-item" onclick="showToast('📖 ${s.label} stories coming soon!')">
+      <div class="story-ring">
+        <div class="story-inner">${s.icon}</div>
+      </div>
+      <span class="story-label">${s.label}</span>
+    </div>`).join('');
+}
+
+// =============================================
+//  FEED FILTER
+// =============================================
+let activeFeedFilter = 'all';
+function filterFeed(btn, filter) {
+  document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+  btn.classList.add('active');
+  activeFeedFilter = filter;
+  renderFeed();
+}
+
+// Updated renderFeed with filter support
+const _origRenderFeed = renderFeed;
+renderFeed = function() {
+  const posts = getData('hub_posts', []);
+  const filtered = activeFeedFilter === 'all' ? posts : posts.filter(p => p.tag === activeFeedFilter);
+  const container = document.getElementById('posts-container');
+  if (!container) return;
+  container.innerHTML = '';
+  if (filtered.length === 0) {
+    container.innerHTML = `<div style="text-align:center;padding:40px;color:var(--text-muted);">
+      <div style="font-size:40px;margin-bottom:12px;">🔍</div>
+      <p>No posts in this category yet. Be the first! 🚀</p>
+    </div>`;
+    return;
+  }
+  filtered.forEach(post => container.appendChild(makePostCard(post)));
+};
+
+// =============================================
+//  NOTIFICATIONS
+// =============================================
+function renderNotifications() {
+  const posts = getData('hub_posts', []);
+  const myName = currentUser?.name;
+  const notifs = [];
+
+  posts.forEach(p => {
+    if (p.authorId === currentUser?.id) {
+      if (p.likes.length > 0) {
+        notifs.push({ icon:'❤️', text:`Your post got ${p.likes.length} like${p.likes.length>1?'s':''}`, time: p.time + 60000 });
+      }
+      if (p.comments.length > 0) {
+        notifs.push({ icon:'💬', text:`${p.comments[p.comments.length-1]?.author} commented on your post`, time: p.time + 120000 });
+      }
+    }
+  });
+
+  notifs.push({ icon:'🎉', text:'Welcome to Student Hub! Explore the feed 🌊', time: Date.now() - 3600000 });
+  notifs.push({ icon:'🗳️', text:'New weekly polls are live! Go vote 🔥', time: Date.now() - 7200000 });
+
+  const list = document.getElementById('notif-list');
+  if (!list) return;
+  if (notifs.length === 0) {
+    list.innerHTML = `<p style="font-size:13px;color:var(--text-muted);">No notifications yet 👀</p>`;
+    return;
+  }
+  list.innerHTML = notifs.slice(0,6).map(n => `
+    <div class="notif-item">
+      <div class="notif-icon">${n.icon}</div>
+      <div>
+        <div class="notif-text">${esc(n.text)}</div>
+        <div class="notif-time">${getTimeAgo(n.time)}</div>
+      </div>
+    </div>`).join('');
+}
+
+function toggleNotif() {
+  const dd = document.getElementById('notif-dropdown');
+  dd.classList.toggle('open');
+  renderNotifications();
+  document.getElementById('notif-dot').style.display = 'none';
+}
+document.addEventListener('click', (e) => {
+  const dd = document.getElementById('notif-dropdown');
+  if (dd && !dd.contains(e.target) && !e.target.closest('.notif-btn')) {
+    dd.classList.remove('open');
+  }
+});
+
+// =============================================
+//  SPORTS PAGE
+// =============================================
+const DEFAULT_FIXTURES = [
+  { type:'result', title:'U17 Football vs Riverside', body:'Final score: Our School 3 - 1 Riverside Secondary. Goals from Kofi (2) and Marcus (1) 🔥', time: Date.now()-86400000 },
+  { type:'fixture', title:'Basketball vs Greenfield High', body:'Date: This Saturday, 10:00 AM. Venue: School Sports Hall. Come support the team! 🏀', time: Date.now()-43200000 },
+  { type:'result', title:'Athletics District Championships', body:'We finished 2nd overall! Amara won Gold in 100m 🏅 and Deji won Silver in Long Jump.', time: Date.now()-172800000 },
+];
+
+function adminPostSports() {
+  if (currentUser?.role !== 'admin') return;
+  const type = document.getElementById('sports-post-type').value;
+  const title = document.getElementById('sports-post-title').value.trim();
+  const body = document.getElementById('sports-post-body').value.trim();
+  if (!title || !body) { showToast('❌ Fill in all fields!'); return; }
+  const posts = getData('hub_school_posts', []);
+  posts.unshift({ id: 'sp_'+Date.now(), type, title, body, time: Date.now(), section: 'sports' });
+  setData('hub_school_posts', posts);
+  document.getElementById('sports-post-title').value = '';
+  document.getElementById('sports-post-body').value = '';
+  renderSportsPage();
+  showToast('⚽ Sports update posted!');
+}
+
+function renderSportsPage() {
+  const allPosts = getData('hub_school_posts', []);
+  const sportsPosts = allPosts.filter(p => p.section === 'sports' || ['fixture','result','athlete','news'].includes(p.type));
+  const fixtures = sportsPosts.filter(p => p.type==='fixture'||p.type==='result');
+  const news = sportsPosts.filter(p => p.type==='athlete'||p.type==='news');
+
+  const fixEl = document.getElementById('sports-fixtures-container');
+  if (fixEl) {
+    if (fixtures.length > 0) {
+      fixEl.innerHTML = fixtures.map(p => schoolPostHTML(p)).join('');
+    } else {
+      fixEl.innerHTML = DEFAULT_FIXTURES.map(p => `<div class="school-post">
+        <span class="school-post-type ${p.type==='result'?'type-sports':'type-event'}">${p.type==='result'?'✅ Result':'📅 Fixture'}</span>
+        <h3>${esc(p.title)}</h3><p>${esc(p.body)}</p>
+        <div class="school-post-footer"><span class="school-post-date">🕐 ${getTimeAgo(p.time)}</span></div>
+      </div>`).join('');
+    }
+  }
+
+  const newsEl = document.getElementById('sports-news-container');
+  if (newsEl && news.length > 0) {
+    newsEl.innerHTML = news.map(p => schoolPostHTML(p)).join('');
+  }
+
+  // Athlete spotlight
+  const ath = getData('hub_athlete', null);
+  if (ath) {
+    document.getElementById('athlete-av-icon').textContent = ath.icon || '🏃';
+    document.getElementById('athlete-name').textContent = ath.name || '[ Your School Star ]';
+    document.getElementById('athlete-sport').textContent = ath.sport || 'Sport • Class';
+    document.getElementById('athlete-stat').textContent = ath.stat || 'Add athlete info here';
+    document.getElementById('athlete-bio').textContent = ath.bio || '';
+  }
+
+  // League table
+  renderLeagueTable();
+}
+
+function renderLeagueTable() {
+  const data = getData('hub_league', null);
+  const tbody = document.getElementById('league-table-body');
+  if (!tbody) return;
+  if (!data || !data.length) { return; }
+  tbody.innerHTML = data.map((t,i) => `
+    <tr>
+      <td style="font-weight:700;color:${i===0?'var(--accent5)':i===1?'var(--text-muted)':i===2?'#cd7f32':'var(--text)'};">${i+1}</td>
+      <td style="font-weight:600;">${esc(t.name)}</td>
+      <td>${t.p}</td><td>${t.w}</td><td>${t.d}</td><td>${t.l}</td>
+      <td style="font-weight:800;color:var(--accent4);">${t.pts}</td>
+    </tr>`).join('');
+}
+
+function saveLeagueTable() {
+  const raw = document.getElementById('league-data-input')?.value.trim();
+  if (!raw) { showToast('❌ Enter league data first!'); return; }
+  try {
+    const parsed = JSON.parse(raw);
+    setData('hub_league', parsed);
+    renderLeagueTable();
+    renderSportsPage();
+    showToast('✅ League table saved!');
+  } catch(e) {
+    showToast('❌ Invalid JSON format. Check the data!');
+  }
+}
+
+function saveAthleteSpotlight() {
+  const name = document.getElementById('ath-name')?.value.trim();
+  const sport = document.getElementById('ath-sport')?.value.trim();
+  const stat = document.getElementById('ath-stat')?.value.trim();
+  const icon = document.getElementById('ath-icon')?.value.trim() || '🏃';
+  const bio = document.getElementById('ath-bio')?.value.trim();
+  if (!name) { showToast('❌ Enter athlete name!'); return; }
+  setData('hub_athlete', { name, sport, stat, icon, bio });
+  renderSportsPage();
+  showToast('🌟 Athlete spotlight updated!');
+}
+
+// =============================================
+//  LEADERBOARD PAGE
+// =============================================
+function renderLeaderboard() {
+  const users = getData('hub_users', []);
+  const posts = getData('hub_posts', []);
+
+  const scores = users.map(u => {
+    const myPosts = posts.filter(p => p.authorId === u.id);
+    const totalLikes = myPosts.reduce((a,p)=>a+p.likes.length,0);
+    const totalComments = myPosts.reduce((a,p)=>a+p.comments.length,0);
+    const givenLikes = posts.reduce((a,p)=>(p.likes.includes(u.id)?a+1:a),0);
+    const score = myPosts.length*10 + totalLikes*5 + totalComments*3 + givenLikes*2;
+    return { ...u, score, myPosts: myPosts.length, totalLikes, totalComments };
+  }).sort((a,b) => b.score - a.score);
+
+  const lbEl = document.getElementById('leaderboard-list');
+  if (!lbEl) return;
+
+  const medals = ['🥇','🥈','🥉'];
+  const gradients = [
+    'linear-gradient(135deg,#fbbf24,#f59e0b)',
+    'linear-gradient(135deg,#94a3b8,#64748b)',
+    'linear-gradient(135deg,#cd7f32,#92400e)',
+  ];
+
+  lbEl.innerHTML = scores.slice(0,10).map((u,i) => {
+    const initials = u.name.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
+    return `<div class="lb-item ${i===0?'top1':i===1?'top2':i===2?'top3':''}">
+      <div class="lb-rank">${i < 3 ? medals[i] : i+1}</div>
+      <div class="lb-av" style="background:${gradients[i]||'linear-gradient(135deg,var(--accent),var(--accent2))'};">${initials}</div>
+      <div class="lb-info">
+        <div class="lb-name">${esc(u.name)}</div>
+        <div class="lb-class">${esc(u.classGrade)} · ${u.myPosts} posts · ❤️${u.totalLikes}</div>
+      </div>
+      <div class="lb-score">${u.score} pts</div>
+    </div>`;
+  }).join('');
+
+  // Activity breakdown
+  const abEl = document.getElementById('activity-breakdown');
+  if (abEl) {
+    const totalPosts = posts.length;
+    const totalLikes = posts.reduce((a,p)=>a+p.likes.length,0);
+    const totalComments = posts.reduce((a,p)=>a+p.comments.length,0);
+    abEl.innerHTML = `
+      <div style="display:flex;flex-direction:column;gap:10px;">
+        ${[
+          { label:'Total Posts', val:totalPosts, icon:'📝', color:'var(--accent)' },
+          { label:'Total Likes', val:totalLikes, icon:'❤️', color:'var(--accent3)' },
+          { label:'Total Comments', val:totalComments, icon:'💬', color:'var(--accent2)' },
+          { label:'Active Students', val:users.filter(u=>u.role==='student').length, icon:'👤', color:'var(--accent4)' },
+        ].map(item => `
+          <div style="display:flex;align-items:center;gap:12px;padding:10px;background:rgba(0,0,0,0.15);border-radius:10px;">
+            <span style="font-size:20px;">${item.icon}</span>
+            <span style="flex:1;font-size:14px;color:var(--text-muted);">${item.label}</span>
+            <span style="font-family:'Syne',sans-serif;font-size:18px;font-weight:800;color:${item.color};">${item.val}</span>
+          </div>`).join('')}
+      </div>`;
+  }
+
+  // Weekly highlights
+  const whEl = document.getElementById('weekly-highlights');
+  if (whEl) {
+    const topPost = [...posts].sort((a,b)=>b.likes.length-a.likes.length)[0];
+    whEl.innerHTML = topPost ? `
+      <div style="padding:12px;background:rgba(0,0,0,0.15);border-radius:12px;margin-bottom:10px;">
+        <div style="font-size:12px;color:var(--accent5);font-weight:700;margin-bottom:6px;">🔥 Most Liked Post</div>
+        <div style="font-size:13px;line-height:1.5;">${esc(topPost.content.slice(0,100))}${topPost.content.length>100?'…':''}</div>
+        <div style="font-size:12px;color:var(--text-muted);margin-top:6px;">by ${esc(topPost.author)} · ❤️ ${topPost.likes.length}</div>
+      </div>
+      <div style="padding:12px;background:rgba(0,0,0,0.15);border-radius:12px;">
+        <div style="font-size:12px;color:var(--accent);font-weight:700;margin-bottom:6px;">🏆 Top Contributor</div>
+        <div style="font-size:14px;font-weight:600;">${esc(scores[0]?.name||'—')}</div>
+        <div style="font-size:12px;color:var(--text-muted);">${scores[0]?.score||0} points this month</div>
+      </div>` : `<p style="color:var(--text-muted);font-size:14px;">Post something to appear here! 🚀</p>`;
+  }
+}
+
+// =============================================
+//  ADMIN DASHBOARD
+// =============================================
+function renderAdminDashboard() {
+  if (currentUser?.role !== 'admin') return;
+  const users = getData('hub_users', []);
+  const posts = getData('hub_posts', []);
+  const schoolPosts = getData('hub_school_posts', []);
+  const entPosts = getData('hub_ent_posts', []);
+
+  const grid = document.getElementById('admin-stats-grid');
+  if (grid) {
+    const stats = [
+      { icon:'👥', num:users.filter(u=>u.role==='student').length, label:'Students', color:'var(--accent)' },
+      { icon:'📝', num:posts.length, label:'Feed Posts', color:'var(--accent2)' },
+      { icon:'🏫', num:schoolPosts.length, label:'School Posts', color:'var(--accent4)' },
+      { icon:'🎵', num:entPosts.length, label:'Entertainment Posts', color:'var(--accent3)' },
+    ];
+    grid.innerHTML = stats.map(s => `
+      <div class="admin-stat-card">
+        <div class="admin-stat-icon">${s.icon}</div>
+        <div class="admin-stat-num" style="color:${s.color};">${s.num}</div>
+        <div class="admin-stat-label">${s.label}</div>
+      </div>`).join('');
+  }
+
+  // Users table
+  const tbody = document.getElementById('admin-users-body');
+  if (tbody) {
+    const students = users.filter(u => u.role === 'student');
+    document.getElementById('user-count-label').textContent = `${students.length} student${students.length!==1?'s':''}`;
+    tbody.innerHTML = students.map(u => `
+      <tr>
+        <td style="font-weight:600;">${esc(u.name)}</td>
+        <td style="color:var(--text-muted);">${esc(u.email)}</td>
+        <td>${esc(u.classGrade)}</td>
+        <td><span class="role-badge role-student">Student</span></td>
+        <td><button class="delete-post" onclick="removeUser('${u.id}')">🗑️ Remove</button></td>
+      </tr>`).join('') || '<tr><td colspan="5" style="text-align:center;color:var(--text-muted);padding:20px;">No students registered yet.</td></tr>';
+  }
+
+  // Posts list
+  const postsList = document.getElementById('admin-posts-list');
+  if (postsList) {
+    postsList.innerHTML = posts.slice(0,20).map(p => `
+      <div style="display:flex;align-items:flex-start;gap:12px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.06);">
+        <div style="flex:1;">
+          <div style="font-size:12px;color:var(--text-muted);">${esc(p.author)} · ${getTimeAgo(p.time)}</div>
+          <div style="font-size:13px;margin-top:3px;">${esc(p.content.slice(0,100))}${p.content.length>100?'…':''}</div>
+        </div>
+        <button class="delete-post" onclick="deletePost('${p.id}');renderAdminDashboard();">🗑️</button>
+      </div>`).join('') || '<p style="color:var(--text-muted);font-size:14px;">No posts yet.</p>';
+  }
+}
+
+function removeUser(userId) {
+  if (!confirm('Remove this student account? This cannot be undone.')) return;
+  const users = getData('hub_users', []).filter(u => u.id !== userId);
+  setData('hub_users', users);
+  renderAdminDashboard();
+  updateStats();
+  showToast('🗑️ Student account removed.');
+}
+
+function switchAdminTab(tab, btn) {
+  ['users','posts','league','athlete'].forEach(t => {
+    const el = document.getElementById('admin-tab-'+t);
+    if (el) el.style.display = t===tab ? 'block' : 'none';
+  });
+  document.querySelectorAll('.admin-tab-btn').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  if (tab === 'league') {
+    const data = getData('hub_league', null);
+    if (data) document.getElementById('league-data-input').value = JSON.stringify(data, null, 2);
+  }
+}
+
+// =============================================
+//  ENHANCED SETUP UI
+// =============================================
+const _origSetupUI = setupUI;
+setupUI = function() {
+  _origSetupUI();
+
+  // Welcome name
+  const wn = document.getElementById('welcome-name');
+  if (wn) wn.textContent = currentUser.name.split(' ')[0];
+
+  // Admin extras
+  if (currentUser.role === 'admin') {
+    const adminTab = document.getElementById('admin-nav-tab');
+    if (adminTab) adminTab.style.display = 'inline-flex';
+    const adminSports = document.getElementById('admin-sports-form');
+    if (adminSports) adminSports.style.display = 'block';
+  }
+
+  renderStories();
+  renderSportsPage();
+  renderLeaderboard();
+  renderAdminDashboard();
+  renderNotifications();
+
+  // Scroll to top button
+  window.addEventListener('scroll', () => {
+    const btn = document.getElementById('scroll-top-btn');
+    if (btn) btn.classList.toggle('visible', window.scrollY > 300);
+  });
+};
+
+// Override switchPage to also render new pages
+const _origSwitchPage = switchPage;
+switchPage = function(page) {
+  _origSwitchPage(page);
+  if (page === 'leaderboard') renderLeaderboard();
+  if (page === 'admin') renderAdminDashboard();
+  if (page === 'sports') renderSportsPage();
+  // Update mobile nav
+  document.querySelectorAll('.mob-tab').forEach(t => t.classList.toggle('active', t.dataset.page === page));
+};
+
+// =============================================
+//  BOOT
+// =============================================
+initDefaults();
+tryRestoreSession();
+</script>
+
+<!-- Mobile Bottom Nav -->
+<nav class="mobile-nav" id="mobile-nav">
+  <button class="mob-tab active" data-page="feed" onclick="switchPage('feed')"><span>🏠</span>Feed</button>
+  <button class="mob-tab" data-page="school" onclick="switchPage('school')"><span>🏫</span>School</button>
+  <button class="mob-tab" data-page="sports" onclick="switchPage('sports')"><span>⚽</span>Sports</button>
+  <button class="mob-tab" data-page="polls" onclick="switchPage('polls')"><span>🗳️</span>Polls</button>
+  <button class="mob-tab" data-page="entertain" onclick="switchPage('entertain')"><span>🎵</span>Vibes</button>
+  <button class="mob-tab" data-page="profile" onclick="switchPage('profile')"><span>👤</span>Me</button>
+</nav>
+
+<!-- Scroll to Top -->
+<button class="scroll-top" id="scroll-top-btn" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+
+</body>
+</html>
