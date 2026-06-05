@@ -801,7 +801,7 @@
   <div class="auth-container">
     <div class="auth-logo">
       <span class="logo-icon">🎓</span>
-      <h1>Student Hub</h1>
+      <h1>SPCHS Student's Hub</h1>
       <p>Your school's social universe 🌍</p>
     </div>
     <div class="auth-card glass">
@@ -1127,7 +1127,7 @@
 
     <div class="polls-layout">
       <!-- SONG POLL -->
-      <div class="poll-card glass" id="poll-card-songs">
+      <div class="poll-card glass">
         <div class="poll-weeks">Week 24, 2025</div>
         <h3>🎵 Song of the Week</h3>
         <p>Which track is the biggest banger this week? Vote and settle the debate! 🎤</p>
@@ -1136,7 +1136,7 @@
       </div>
 
       <!-- SPORTS POLL FOR THE BOYS 😂 -->
-      <div class="poll-card glass" id="poll-card-goat">
+      <div class="poll-card glass">
         <div class="poll-weeks">🔥 Lads' Poll</div>
         <h3>⚽ Sports Debate</h3>
         <p>Who wins this one? The boys decide 😤👊</p>
@@ -1145,7 +1145,7 @@
       </div>
 
       <!-- BEST TEAM POLL -->
-      <div class="poll-card glass" id="poll-card-teams">
+      <div class="poll-card glass">
         <div class="poll-weeks">Champions League</div>
         <h3>🏆 Best Team Vibes?</h3>
         <p>Who's got the best squad this season? No debates, just vote 😂</p>
@@ -1154,7 +1154,7 @@
       </div>
 
       <!-- SCHOOL SPORTS POLL -->
-      <div class="poll-card glass" id="poll-card-schoolsport">
+      <div class="poll-card glass">
         <div class="poll-weeks">School Edition</div>
         <h3>🥇 School Sport King?</h3>
         <p>Which sport reigns supreme in school? Let the students decide 🏅</p>
@@ -1299,13 +1299,10 @@
 
     <!-- Admin Tabs -->
     <div class="admin-tabs">
-      <button class="admin-tab-btn active" onclick="switchAdminTab('users',this)">👥 Users</button>
-      <button class="admin-tab-btn" onclick="switchAdminTab('posts',this)">📝 Posts</button>
-      <button class="admin-tab-btn" onclick="switchAdminTab('polls',this)">🗳️ Edit Polls</button>
-      <button class="admin-tab-btn" onclick="switchAdminTab('music',this)">🎵 Music Charts</button>
-      <button class="admin-tab-btn" onclick="switchAdminTab('football',this)">⚽ Match Results</button>
-      <button class="admin-tab-btn" onclick="switchAdminTab('league',this)">📊 League Table</button>
-      <button class="admin-tab-btn" onclick="switchAdminTab('athlete',this)">🌟 Athlete</button>
+      <button class="admin-tab-btn active" onclick="switchAdminTab('users',this)">👥 Manage Users</button>
+      <button class="admin-tab-btn" onclick="switchAdminTab('posts',this)">📝 All Posts</button>
+      <button class="admin-tab-btn" onclick="switchAdminTab('league',this)">⚽ League Table</button>
+      <button class="admin-tab-btn" onclick="switchAdminTab('athlete',this)">🌟 Athlete Spotlight</button>
     </div>
 
     <div id="admin-tab-users">
@@ -1325,39 +1322,6 @@
       <div class="glass" style="padding:20px;">
         <div style="font-family:'Syne',sans-serif;font-size:14px;font-weight:700;margin-bottom:16px;">All Feed Posts</div>
         <div id="admin-posts-list"></div>
-      </div>
-    </div>
-
-    <!-- POLLS EDITOR TAB -->
-    <div id="admin-tab-polls" style="display:none;">
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
-        ${['songs','goat','teams','schoolsport'].map(slug => `
-        <div class="glass" style="padding:18px;">
-          <div style="font-family:'Syne',sans-serif;font-size:13px;font-weight:700;margin-bottom:12px;" id="admin-poll-title-${slug}">Loading...</div>
-          <button class="post-btn" style="width:100%;font-size:13px;" onclick="openPollEditor('hub_poll_${slug}')">✏️ Edit This Poll</button>
-        </div>`).join('')}
-      </div>
-      <p style="font-size:13px;color:var(--text-muted);margin-top:16px;">💡 Click Edit to change the poll title, question, options and optionally reset votes for a fresh round.</p>
-    </div>
-
-    <!-- MUSIC CHARTS EDITOR TAB -->
-    <div id="admin-tab-music" style="display:none;">
-      <div class="glass" style="padding:20px;">
-        <div style="font-family:'Syne',sans-serif;font-size:14px;font-weight:700;margin-bottom:4px;">🎵 Edit Music Charts</div>
-        <p style="font-size:13px;color:var(--text-muted);margin-bottom:16px;">Update the top 5 songs displayed in the Entertainment page.</p>
-        <div id="music-editor-rows"></div>
-        <button class="post-btn" style="margin-top:12px;" onclick="saveMusicCharts()">💾 Save Music Charts</button>
-      </div>
-    </div>
-
-    <!-- FOOTBALL RESULTS EDITOR TAB -->
-    <div id="admin-tab-football" style="display:none;">
-      <div class="glass" style="padding:20px;">
-        <div style="font-family:'Syne',sans-serif;font-size:14px;font-weight:700;margin-bottom:4px;">⚽ Edit Match Results</div>
-        <p style="font-size:13px;color:var(--text-muted);margin-bottom:16px;">Update match results shown in the Entertainment page. Status: FT (Full Time) or LIVE.</p>
-        <div id="football-editor-rows"></div>
-        <button class="post-btn" style="background:linear-gradient(135deg,var(--accent4),#059669);margin-top:12px;margin-right:10px;" onclick="addFootballRow()">➕ Add Match</button>
-        <button class="post-btn" style="margin-top:12px;" onclick="saveFootballResults()">💾 Save Results</button>
       </div>
     </div>
 
@@ -1767,201 +1731,104 @@ function updateStats() {
 }
 
 // =============================================
-//  POLLS  — fully dynamic, admin-editable
+//  POLLS
 // =============================================
+const SONGS = [
+  { key: 'Drake_Janice_STFU', label: 'Drake - Janice STFU', icon: '🎵' },
+  { key: 'Don_Toliver_ATM', label: 'Don Toliver - ATM ', icon: '🎵' },
+  { key: 'Drake_Shabang', label: 'Drake - Shabang', icon: '🎵' },
+  { key: 'Where.t.at_She_goes_by', label: 'Where.t.at - She goes by', icon: '🎶' },
+];
+const SPORTS_P = [
+  { key: 'Messi', label: 'Messi 🐐', icon: '🇦🇷' },
+  { key: 'Ronaldo', label: 'Cristiano Ronaldo', icon: '🇵🇹' },
+  { key: 'Mbappe', label: 'Mbappé ⚡', icon: '🇫🇷' },
+  { key: 'Vinicius', label: 'Vinicius Jr. 🕺', icon: '🇧🇷' },
+];
+const TEAMS_P = [
+  { key: 'ManCity', label: 'Man City 💙', icon: '🏆' },
+  { key: 'Arsenal', label: 'Arsenal 🔴', icon: '🔴' },
+  { key: 'Liverpool', label: 'Liverpool ⚽', icon: '🔴' },
+  { key: 'Chelsea', label: 'Chelsea 💙', icon: '💎' },
+];
+const SCH_SPORTS = [
+  { key: 'Football', label: 'Football ⚽', icon: '⚽' },
+  { key: 'Basketball', label: 'Basketball 🏀', icon: '🏀' },
+  { key: 'Athletics', label: 'Athletics 🏃', icon: '🏃' },
+  { key: 'Volleyball', label: 'Volleyball 🏐', icon: '🏐' },
+];
 
-// Default poll data (used only on first run, then stored in localStorage)
-const DEFAULT_POLLS = {
-  hub_poll_songs: {
-    title: '🎵 Song of the Week',
-    question: 'Which track is the biggest banger this week?',
-    week: 'Week 24, 2025',
-    options: [
-      { key: 'opt1', label: 'Tyla — Water', icon: '💦' },
-      { key: 'opt2', label: 'Seun Kuti — African Glitch', icon: '🎺' },
-      { key: 'opt3', label: 'Burna Boy — City Boys', icon: '🔥' },
-      { key: 'opt4', label: 'Afrobeats Mix of the Week', icon: '🎶' },
-    ]
-  },
-  hub_poll_goat: {
-    title: '⚽ The GOAT Debate',
-    question: 'Who is the greatest footballer of all time? The boys decide 😤',
-    week: '🔥 Lads\' Poll',
-    options: [
-      { key: 'opt1', label: 'Messi', icon: '🇦🇷' },
-      { key: 'opt2', label: 'Cristiano Ronaldo', icon: '🇵🇹' },
-      { key: 'opt3', label: 'Mbappé', icon: '🇫🇷' },
-      { key: 'opt4', label: 'Vinicius Jr.', icon: '🇧🇷' },
-    ]
-  },
-  hub_poll_teams: {
-    title: '🏆 Best Club Team?',
-    question: 'Who\'s got the best squad this season? No debates, just vote 😂',
-    week: 'Champions League',
-    options: [
-      { key: 'opt1', label: 'Man City', icon: '💙' },
-      { key: 'opt2', label: 'Arsenal', icon: '🔴' },
-      { key: 'opt3', label: 'Liverpool', icon: '🌟' },
-      { key: 'opt4', label: 'Chelsea', icon: '💎' },
-    ]
-  },
-  hub_poll_schoolsport: {
-    title: '🥇 School Sport King?',
-    question: 'Which sport reigns supreme in school? Let the students decide 🏅',
-    week: 'School Edition',
-    options: [
-      { key: 'opt1', label: 'Football', icon: '⚽' },
-      { key: 'opt2', label: 'Basketball', icon: '🏀' },
-      { key: 'opt3', label: 'Athletics', icon: '🏃' },
-      { key: 'opt4', label: 'Volleyball', icon: '🏐' },
-    ]
-  }
-};
-
-function getPollData(pollKey) {
-  return getData(pollKey, DEFAULT_POLLS[pollKey]);
-}
-
-function renderPoll(containerId, totalId, pollKey, barColor='rgba(167,139,250,0.12)', pctColor='var(--accent)') {
-  const poll = getPollData(pollKey);
-  if (!poll) return;
-  const votes = getData(pollKey + '_votes', {});
-  const userVoted = getData(pollKey + '_voted_' + (currentUser?.id||''), null);
+function renderSongPoll(containerId, totalId, mini=false) {
+  const votes = getData('hub_song_votes', {});
+  const userVoted = getData('hub_song_voted_' + (currentUser?.id||''), null);
   const total = Object.values(votes).reduce((a,b)=>a+b,0);
   const container = document.getElementById(containerId);
   if (!container) return;
-
-  container.innerHTML = poll.options.map(s => {
+  container.innerHTML = SONGS.map(s => {
     const v = votes[s.key] || 0;
     const pct = total > 0 ? Math.round(v/total*100) : 0;
-    const clickFn = userVoted ? '' : `castPollVote('${pollKey}','${s.key}','${containerId}','${totalId}','${barColor}','${pctColor}')`;
-    return `<div class="poll-option ${userVoted?'voted':''}" onclick="${clickFn}">
-      <div class="poll-bar" style="width:${pct}%;background:${barColor};border-radius:10px;"></div>
-      <span style="font-size:18px;position:relative;z-index:1;">${esc(s.icon)}</span>
-      <span class="poll-label" style="position:relative;z-index:1;">${esc(s.label)}</span>
-      ${userVoted ? `<span class="poll-pct" style="color:${pctColor};position:relative;z-index:1;">${pct}%</span>` : ''}
+    return `<div class="poll-option ${userVoted?'voted':''}" onclick="${userVoted?'':'castVote(\'hub_song_votes\',\''+s.key+'\',\'hub_song_voted\',\''+containerId+'\',\''+totalId+'\')'}" >
+      <div class="poll-bar" style="width:${pct}%"></div>
+      <span style="font-size:16px;">${s.icon}</span>
+      <span class="poll-label">${s.label}</span>
+      ${userVoted?`<span class="poll-pct">${pct}%</span>`:''}
     </div>`;
   }).join('');
-
-  const totalEl = document.getElementById(totalId);
-  if (totalEl) totalEl.textContent = `Total votes: ${total}`;
+  document.getElementById(totalId).textContent = `Total votes: ${total}`;
 }
 
-function castPollVote(pollKey, optKey, containerId, totalId, barColor, pctColor) {
-  const votedKey = pollKey + '_voted_' + currentUser.id;
-  if (getData(votedKey, null)) { showToast('✅ You already voted on this one!'); return; }
-  const votes = getData(pollKey + '_votes', {});
+function renderGenericPoll(containerId, totalId, items, voteKey, votedKey, barColor='rgba(167,139,250,0.12)', pctColor='var(--accent)') {
+  const votes = getData(voteKey, {});
+  const userVoted = getData(votedKey + '_' + (currentUser?.id||''), null);
+  const total = Object.values(votes).reduce((a,b)=>a+b,0);
+  const container = document.getElementById(containerId);
+  if (!container) return;
+  container.innerHTML = items.map(s => {
+    const v = votes[s.key] || 0;
+    const pct = total > 0 ? Math.round(v/total*100) : 0;
+    return `<div class="sports-poll-option ${userVoted?'voted':''}" onclick="${userVoted?'':'castVoteGeneric(\''+voteKey+'\',\''+s.key+'\',\''+votedKey+'\',\''+containerId+'\',\''+totalId+'\')'}" >
+      <div class="sports-bar" style="width:${pct}%;background:${barColor};"></div>
+      <span class="sports-opt-icon">${s.icon}</span>
+      <span class="sports-opt-label">${s.label}</span>
+      ${userVoted?`<span class="sports-opt-pct" style="color:${pctColor}">${pct}%</span>`:''}
+    </div>`;
+  }).join('');
+  document.getElementById(totalId).textContent = `Total votes: ${total}`;
+}
+
+function castVote(voteKey, optKey, votedKey, containerId, totalId) {
+  const storedVotedKey = votedKey + '_' + currentUser.id;
+  if (getData(storedVotedKey, null)) { showToast('✅ Already voted!'); return; }
+  const votes = getData(voteKey, {});
   votes[optKey] = (votes[optKey] || 0) + 1;
-  setData(pollKey + '_votes', votes);
-  setData(votedKey, optKey);
-  renderPolls();
-  renderSongPollSidebar();
-  showToast('🗳️ Vote cast! Results updated 🎉');
+  setData(voteKey, votes);
+  setData(storedVotedKey, optKey);
+  renderSongPoll(containerId, totalId);
+  renderSongPoll('song-poll-main', 'song-poll-main-total');
+  renderSongPoll('song-poll-sidebar', 'song-poll-total', true);
+  showToast('🗳️ Vote cast! 🎉');
 }
 
-// Sidebar song poll shortcut
-function renderSongPollSidebar() {
-  renderPoll('song-poll-sidebar', 'song-poll-total', 'hub_poll_songs', 'rgba(167,139,250,0.15)', 'var(--accent)');
-  const poll = getPollData('hub_poll_songs');
-  // Update sidebar widget title if poll title changed
-  const el = document.getElementById('song-poll-sidebar');
-  if (el && poll) {
-    const parent = el.closest('.sidebar-widget');
-    if (parent) {
-      const titleEl = parent.querySelector('.widget-title');
-      if (titleEl) titleEl.innerHTML = `${poll.title}`;
-    }
-  }
-}
+function castVoteGeneric(voteKey, optKey, votedKey, containerId, totalId) {
+  const storedVotedKey = votedKey + '_' + currentUser.id;
+  if (getData(storedVotedKey, null)) { showToast('✅ Already voted!'); return; }
+  const votes = getData(voteKey, {});
+  votes[optKey] = (votes[optKey] || 0) + 1;
+  setData(voteKey, votes);
+  setData(storedVotedKey, optKey);
 
-// Legacy alias so old castVote calls still work
-function castVote(vk,ok,votedK,cid,tid){ castPollVote('hub_poll_songs',ok,cid,tid,'rgba(167,139,250,0.15)','var(--accent)'); }
-function castVoteGeneric(vk,ok,votedK,cid,tid){
-  const map = {
-    'sports-poll-main':'hub_poll_goat',
-    'team-poll-main':'hub_poll_teams',
-    'school-sport-poll':'hub_poll_schoolsport'
-  };
-  castPollVote(map[cid]||'hub_poll_goat', ok, cid, tid, 'rgba(52,211,153,0.1)', 'var(--accent4)');
+  // Re-render both instances
+  if (containerId === 'sports-poll-main') renderGenericPoll('sports-poll-main','sports-poll-main-total',SPORTS_P,'hub_sports_votes','hub_sports_voted','rgba(52,211,153,0.1)','var(--accent4)');
+  if (containerId === 'team-poll-main') renderGenericPoll('team-poll-main','team-poll-main-total',TEAMS_P,'hub_team_votes','hub_team_voted','rgba(56,189,248,0.1)','var(--accent2)');
+  if (containerId === 'school-sport-poll') renderGenericPoll('school-sport-poll','school-sport-poll-total',SCH_SPORTS,'hub_school_sport_votes','hub_schsport_voted','rgba(251,191,36,0.1)','var(--accent5)');
+  showToast('🗳️ Your vote is in! 💪');
 }
 
 function renderPolls() {
-  // Update titles and questions from stored poll data
-  ['songs','goat','teams','schoolsport'].forEach(slug => {
-    const key = 'hub_poll_' + slug;
-    const poll = getPollData(key);
-    if (!poll) return;
-    const card = document.getElementById('poll-card-' + slug);
-    if (card) {
-      const h3 = card.querySelector('h3');
-      const p = card.querySelector('p');
-      const wk = card.querySelector('.poll-weeks');
-      if (h3) h3.textContent = poll.title;
-      if (p) p.textContent = poll.question;
-      if (wk) wk.textContent = poll.week;
-    }
-  });
-
-  renderPoll('song-poll-main',     'song-poll-main-total',    'hub_poll_songs',       'rgba(167,139,250,0.15)', 'var(--accent)');
-  renderPoll('sports-poll-main',   'sports-poll-main-total',  'hub_poll_goat',        'rgba(52,211,153,0.1)',   'var(--accent4)');
-  renderPoll('team-poll-main',     'team-poll-main-total',    'hub_poll_teams',       'rgba(56,189,248,0.1)',   'var(--accent2)');
-  renderPoll('school-sport-poll',  'school-sport-poll-total', 'hub_poll_schoolsport', 'rgba(251,191,36,0.1)',   'var(--accent5)');
-  renderSongPollSidebar();
-}
-
-// =============================================
-//  ADMIN POLL EDITOR
-// =============================================
-function openPollEditor(pollKey) {
-  const poll = getPollData(pollKey);
-  if (!poll) return;
-  const overlay = document.getElementById('poll-editor-overlay');
-  document.getElementById('pe-poll-key').value = pollKey;
-  document.getElementById('pe-title').value = poll.title;
-  document.getElementById('pe-question').value = poll.question;
-  document.getElementById('pe-week').value = poll.week;
-  poll.options.forEach((opt, i) => {
-    const iconEl = document.getElementById('pe-icon-' + i);
-    const labelEl = document.getElementById('pe-label-' + i);
-    if (iconEl) iconEl.value = opt.icon;
-    if (labelEl) labelEl.value = opt.label;
-  });
-  overlay.style.display = 'flex';
-}
-
-function closePollEditor() {
-  document.getElementById('poll-editor-overlay').style.display = 'none';
-}
-
-function savePollEdit() {
-  const pollKey = document.getElementById('pe-poll-key').value;
-  const poll = getPollData(pollKey);
-  if (!poll) return;
-  poll.title    = document.getElementById('pe-title').value.trim() || poll.title;
-  poll.question = document.getElementById('pe-question').value.trim() || poll.question;
-  poll.week     = document.getElementById('pe-week').value.trim() || poll.week;
-  poll.options.forEach((opt, i) => {
-    const icon  = document.getElementById('pe-icon-' + i)?.value.trim();
-    const label = document.getElementById('pe-label-' + i)?.value.trim();
-    if (icon)  opt.icon  = icon;
-    if (label) opt.label = label;
-  });
-  setData(pollKey, poll);
-
-  // Reset votes + user votes for fresh poll
-  if (document.getElementById('pe-reset-votes').checked) {
-    setData(pollKey + '_votes', {});
-    // Clear all user votes for this poll from every registered user
-    getData('hub_users', []).forEach(u => {
-      localStorage.removeItem(pollKey + '_voted_' + u.id);
-    });
-    showToast('🗳️ Poll updated & votes reset! Fresh start 🔄');
-  } else {
-    showToast('✅ Poll updated successfully!');
-  }
-
-  closePollEditor();
-  renderPolls();
+  renderSongPoll('song-poll-main', 'song-poll-main-total');
+  renderGenericPoll('sports-poll-main','sports-poll-main-total',SPORTS_P,'hub_sports_votes','hub_sports_voted','rgba(52,211,153,0.1)','var(--accent4)');
+  renderGenericPoll('team-poll-main','team-poll-main-total',TEAMS_P,'hub_team_votes','hub_team_voted','rgba(56,189,248,0.1)','var(--accent2)');
+  renderGenericPoll('school-sport-poll','school-sport-poll-total',SCH_SPORTS,'hub_school_sport_votes','hub_schsport_voted','rgba(251,191,36,0.1)','var(--accent5)');
 }
 
 // =============================================
@@ -2026,33 +1893,30 @@ function deleteSchoolPost(id) {
 }
 
 // =============================================
-//  ENTERTAINMENT  — fully editable
+//  ENTERTAINMENT
 // =============================================
-const DEFAULT_MUSIC_CHARTS = [
-  { rank:1, title:'TYLA — Water', artist:'Tyla', icon:'💜', trend:'up' },
-  { rank:2, title:'Burna Boy — City Boys', artist:'Burna Boy', icon:'🔥', trend:'same' },
-  { rank:3, title:'Seun Kuti — African Glitch', artist:'Seun Kuti', icon:'🎺', trend:'up' },
-  { rank:4, title:'Davido — Unavailable', artist:'Davido ft. Musa Keys', icon:'🌟', trend:'down' },
-  { rank:5, title:'Wizkid — Kese', artist:'Wizkid', icon:'⭐', trend:'up' },
+const MUSIC_CHARTS = [
+  { rank:1, title:"TYLA — Water", artist:"Tyla", icon:"💜", trend:"up" },
+  { rank:2, title:"Burna Boy — City Boys", artist:"Burna Boy", icon:"🔥", trend:"same" },
+  { rank:3, title:"Seun Kuti — African Glitch", artist:"Seun Kuti", icon:"🎺", trend:"up" },
+  { rank:4, title:"Davido — Unavailable", artist:"Davido ft. Musa Keys", icon:"🌟", trend:"down" },
+  { rank:5, title:"Wizkid — Kese", artist:"Wizkid", icon:"⭐", trend:"up" },
 ];
 
-const DEFAULT_FOOTBALL = [
-  { league:'Premier League', home:'Arsenal', homeFlag:'🔴', away:'Manchester City', awayFlag:'💙', score:'2 - 2', status:'FT' },
-  { league:'Champions League', home:'Real Madrid', homeFlag:'⚪', away:'Bayern Munich', awayFlag:'🔴', score:'3 - 1', status:'FT' },
-  { league:'AFCON 2025', home:'Nigeria', homeFlag:'🇳🇬', away:'Senegal', awayFlag:'🇸🇳', score:'1 - 0', status:'LIVE' },
-  { league:'La Liga', home:'Barcelona', homeFlag:'🔵🔴', away:'Atletico', awayFlag:'🔴⚪', score:'4 - 2', status:'FT' },
+const FOOTBALL_RESULTS = [
+  { league:"Premier League", home:"Arsenal", homeFlag:"🔴", away:"Manchester City", awayFlag:"💙", score:"2 - 2", status:"FT" },
+  { league:"Champions League", home:"Real Madrid", homeFlag:"⚪", away:"Bayern Munich", awayFlag:"🔴", score:"3 - 1", status:"FT" },
+  { league:"AFCON 2025", home:"Nigeria", homeFlag:"🇳🇬", away:"Senegal", awayFlag:"🇸🇳", score:"1 - 0", status:"LIVE" },
+  { league:"La Liga", home:"Barcelona", homeFlag:"🔵🔴", away:"Atletico", awayFlag:"🔴⚪", score:"4 - 2", status:"FT" },
 ];
-
-function getMusicCharts() { return getData('hub_music_charts', DEFAULT_MUSIC_CHARTS); }
-function getFootballResults() { return getData('hub_football_results', DEFAULT_FOOTBALL); }
 
 function renderEntertainment() {
-  // Music Charts
+  // Music
   const mc = document.getElementById('music-charts');
-  if (mc) mc.innerHTML = getMusicCharts().map(s => `
+  mc.innerHTML = MUSIC_CHARTS.map(s => `
     <div class="chart-item">
       <div class="chart-rank rank-${s.rank}">${s.rank}</div>
-      <div class="chart-art">${esc(s.icon)}</div>
+      <div class="chart-art">${s.icon}</div>
       <div class="chart-info">
         <div class="chart-title">${esc(s.title)}</div>
         <div class="chart-artist">${esc(s.artist)}</div>
@@ -2062,19 +1926,20 @@ function renderEntertainment() {
       </span>
     </div>`).join('');
 
-  // Football Results
+  // Football
   const fr = document.getElementById('football-results');
-  if (fr) fr.innerHTML = getFootballResults().map(m => `
+  fr.innerHTML = FOOTBALL_RESULTS.map(m => `
     <div class="match-card">
       <div class="match-league">${esc(m.league)}</div>
       <div class="match-teams">
-        <div class="match-team"><div class="team-flag">${esc(m.homeFlag)}</div><div class="team-name">${esc(m.home)}</div></div>
+        <div class="match-team"><div class="team-flag">${m.homeFlag}</div><div class="team-name">${esc(m.home)}</div></div>
         <div class="match-score">${esc(m.score)}</div>
-        <div class="match-team"><div class="team-flag">${esc(m.awayFlag)}</div><div class="team-name">${esc(m.away)}</div></div>
+        <div class="match-team"><div class="team-flag">${m.awayFlag}</div><div class="team-name">${esc(m.away)}</div></div>
       </div>
       <div class="match-status ${m.status==='LIVE'?'status-live':'status-ft'}">${m.status==='LIVE'?'🔴 LIVE':'✅ Full Time'}</div>
     </div>`).join('');
 
+  // Admin posts
   renderEntertainPosts();
 }
 
